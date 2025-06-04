@@ -1,4 +1,3 @@
-import os
 import csv
 from pathlib import Path
 from typing import List, Dict
@@ -17,13 +16,17 @@ class Territorio:
         self.ruta_base = Path(ruta_base)
         self.ruta_csv_intocable = Path(ruta_csv_intocable)
         self.ruta_eliminaciones = Path(ruta_eliminaciones)
+        # En lugar de cargar todas las filas en memoria, sólo mantenemos las
+        # rutas de cada CSV para permitir que la carpeta contenga miles o
+        # incluso millones de archivos sin agotar recursos.
         self.csvs = self.cargar_datasets()
         self.buzon_mensajes = []  # 📬 Espacio compartido para comunicación entre agentes
         self.historial_estados = []
         self.modelo = None
         print("🧭 Territorio inicializado")
 
-    def cargar_datasets(self) -> List[List[List[str]]]:
+    def cargar_datasets(self) -> List[Path]:
+        """Devuelve las rutas de los archivos CSV ordenadas por fecha y nombre."""
         archivos = []
         if not self.ruta_base.exists():
             print(f"⚠️ Ruta no encontrada: {self.ruta_base}")
@@ -40,19 +43,25 @@ class Territorio:
 
         archivos_csv.sort(key=lambda x: (x[0], x[1].name))
         for _, archivo in archivos_csv:
-            with archivo.open(newline='', encoding='utf-8') as f:
-                datos = [fila for fila in csv.reader(f)]
-                archivos.append(datos)
+            archivos.append(archivo)
 
         return archivos
 
     def get_csv(self, z: int) -> List[List[str]]:
-        return self.csvs[z] if 0 <= z < len(self.csvs) else []
+        """Carga y devuelve el CSV de la dimensión solicitada."""
+        if 0 <= z < len(self.csvs):
+            ruta = self.csvs[z]
+            try:
+                with ruta.open(newline='', encoding='utf-8') as f:
+                    return [fila for fila in csv.reader(f)]
+            except Exception as e:
+                print(f"⚠️ Error al leer {ruta}: {e}")
+        return []
 
     def renderizar(self):
         print("🌍 Territorio renderizado")
-        estado = {f"z{z}": len(datos) for z, datos in enumerate(self.csvs)}
-        print(f"Estado actual: {estado}")
+        estado = {f"z{z}": ruta.name for z, ruta in enumerate(self.csvs)}
+        print(f"CSV disponibles: {estado}")
 
     def renderizar_agentes_ascii(self, agentes):
         print("🧬 Mapa de Agentes:")
@@ -143,8 +152,10 @@ class Territorio:
 
     def dispersar_dato(self, dato, x, y, z):
         if 0 <= z < len(self.csvs):
-            datos_csv = self.csvs[z]
+            ruta = self.csvs[z]
             try:
+                with ruta.open(newline='', encoding='utf-8') as f:
+                    datos_csv = [fila for fila in csv.reader(f)]
                 while len(datos_csv) <= x:
                     datos_csv.append([])
                 fila = datos_csv[x]
@@ -154,6 +165,8 @@ class Territorio:
                     datos_csv[x][y] = str(dato)
                 else:
                     datos_csv[x][y] += f" | {str(dato)}"
+                with ruta.open('w', newline='', encoding='utf-8') as f:
+                    csv.writer(f).writerows(datos_csv)
                 print(f"🌀 Dato dispersado en ({x},{y},{z}): {dato}")
             except Exception as e:
                 print(f"⚠️ Error al dispersar dato en ({x},{y},{z}): {e}")

@@ -1,7 +1,7 @@
 # topologia.py
 
 import random
-from agentes.tipos.herbivoros.herbivoro_base import HerbivoroBase
+from ecosistema_ia.agentes.tipos.herbivoros.herbivoro_base import HerbivoroBase
 from sklearn.linear_model import LogisticRegression
 
 class Topologia(HerbivoroBase):

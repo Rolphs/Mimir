@@ -1,7 +1,7 @@
 # alquimista.py
 
 import random
-from agentes.tipos.carnivoros.carnivoro_base import CarnivoroBase
+from ecosistema_ia.agentes.tipos.carnivoros.carnivoro_base import CarnivoroBase
 
 class Alquimista(CarnivoroBase):
     def __init__(self, identificador, x, y, z):

@@ -1,6 +1,6 @@
 # carnivoro_base.py
 
-from agentes.agente_base import AgenteBase
+from ecosistema_ia.agentes.agente_base import AgenteBase
 
 class CarnivoroBase(AgenteBase):
     def __init__(self, identificador, x, y, z, funcion="carnivoro"):

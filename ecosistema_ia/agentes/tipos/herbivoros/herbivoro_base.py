@@ -2,7 +2,7 @@
 
 import random
 import hashlib
-from agentes.agente_base import AgenteBase
+from ecosistema_ia.agentes.agente_base import AgenteBase
 from collections import defaultdict
 from sklearn.linear_model import LogisticRegression
 

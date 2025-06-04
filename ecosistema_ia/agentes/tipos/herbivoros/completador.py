@@ -1,7 +1,7 @@
 # completador.py
 
 import random
-from agentes.tipos.herbivoros.herbivoro_base import HerbivoroBase
+from ecosistema_ia.agentes.tipos.herbivoros.herbivoro_base import HerbivoroBase
 
 class Completador(HerbivoroBase):
     def __init__(self, identificador, x, y, z):

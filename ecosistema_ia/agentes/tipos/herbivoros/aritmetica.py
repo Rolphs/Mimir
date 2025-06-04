@@ -2,7 +2,7 @@
 
 import random
 import math
-from agentes.tipos.herbivoros.herbivoro_base import HerbivoroBase
+from ecosistema_ia.agentes.tipos.herbivoros.herbivoro_base import HerbivoroBase
 
 class Aritmetica(HerbivoroBase):
     def __init__(self, identificador, x, y, z):

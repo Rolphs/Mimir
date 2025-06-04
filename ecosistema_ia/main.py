@@ -1,24 +1,25 @@
-import os
 import csv
 import importlib
 import inspect
 from datetime import datetime
-from entorno.territorio import Territorio
-from agentes.tipos.sublimes.metatron import Metatron
-from agentes.tipos.sublimes.mensajero import MetatronMensajes
-from ml.optimizacion_territorio import estimar_ciclos_optimos
+from pathlib import Path
 
-def cargar_agentes_dinamicamente():
+from ecosistema_ia.entorno.territorio import Territorio
+from ecosistema_ia.agentes.tipos.sublimes.metatron import Metatron
+from ecosistema_ia.agentes.tipos.sublimes.mensajero import Mensajero
+from ecosistema_ia.ml.optimizacion_territorio import estimar_ciclos_optimos
+from ecosistema_ia.config import LOGS_DIR
+
+def cargar_agentes_dinamicamente() -> list:
     agentes = []
-    base_path = "agentes/tipos"
-    for tipo in os.listdir(base_path):
-        tipo_path = os.path.join(base_path, tipo)
-        if not os.path.isdir(tipo_path):
+    base_path = Path(__file__).resolve().parent / "agentes" / "tipos"
+    for tipo_path in base_path.iterdir():
+        if not tipo_path.is_dir():
             continue
-        for archivo in os.listdir(tipo_path):
-            if archivo.endswith(".py") and archivo != "__init__.py":
-                nombre_modulo = archivo[:-3]
-                ruta_import = f"agentes.tipos.{tipo}.{nombre_modulo}"
+        for archivo in tipo_path.iterdir():
+            if archivo.suffix == ".py" and archivo.name != "__init__.py":
+                nombre_modulo = archivo.stem
+                ruta_import = f"ecosistema_ia.agentes.tipos.{tipo_path.name}.{nombre_modulo}"
                 try:
                     modulo = importlib.import_module(ruta_import)
                     for nombre_clase, clase in inspect.getmembers(modulo, inspect.isclass):
@@ -44,10 +45,12 @@ def main():
 
     # 3. Inicializar observadores
     metatron = Metatron()
-    metatron_mensajes = MetatronMensajes()
+    metatron_mensajes = Mensajero()
 
     # 4. Preparar archivo de log de ciclos
-    with open("datos/logs/ciclos.csv", mode="w", newline="") as f:
+    log_file = LOGS_DIR / "ciclos.csv"
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+    with log_file.open(mode="w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["ciclo", "total_agentes", "timestamp"])
 
@@ -79,8 +82,8 @@ def main():
                 print(f"⚠️ Error durante el ciclo {ciclo + 1}: {e}")
 
             # Observadores
-            metatron.observar(agentes, ciclo + 1)
-            metatron_mensajes.observar_mensajes(territorio.buzon_mensajes, ciclo + 1)
+            metatron.observar(territorio, agentes, ciclo + 1)
+            metatron_mensajes.observar(territorio, agentes, ciclo + 1)
 
             # Regulación del territorio
             agentes = territorio.regular(agentes, ciclo=ciclo + 1)

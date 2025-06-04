@@ -1,18 +1,20 @@
 # optimizacion_territorio.py
 
-import os
 import csv
+from pathlib import Path
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from ..config import LOGS_DIR
 
-RUTA_LOG_CICLOS = "datos/logs/ciclos.csv"
+RUTA_LOG_CICLOS = LOGS_DIR / "ciclos.csv"
 
 def cargar_datos_historicos(ruta=RUTA_LOG_CICLOS):
-    if not os.path.exists(ruta):
+    ruta = Path(ruta)
+    if not ruta.exists():
         print("📂 No se encontró historial de ciclos.")
         return []
 
-    with open(ruta, newline='', encoding='utf-8') as f:
+    with ruta.open(newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         datos = [row for row in reader]
 

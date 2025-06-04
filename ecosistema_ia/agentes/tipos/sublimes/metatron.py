@@ -2,7 +2,7 @@
 
 import csv
 from datetime import datetime
-from agentes.tipos.sublimes.sublime_base import SublimeBase
+from ecosistema_ia.agentes.tipos.sublimes.sublime_base import SublimeBase
 
 class Metatron(SublimeBase):
     def __init__(self, identificador="MET-001", x=0, y=0, z=0):

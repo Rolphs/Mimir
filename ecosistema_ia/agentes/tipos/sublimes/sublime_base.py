@@ -1,6 +1,6 @@
 """Base class for sublime agents."""
 
-from agentes.agente_base import AgenteBase
+from ecosistema_ia.agentes.agente_base import AgenteBase
 
 
 class SublimeBase(AgenteBase):
@@ -11,4 +11,5 @@ class SublimeBase(AgenteBase):
 
 
 __all__ = ["SublimeBase"]
+
 

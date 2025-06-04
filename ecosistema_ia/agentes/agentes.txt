@@ -1,0 +1,833 @@
+
+
+### agentes/tipos/sublimes/calificador.py ###
+
+# calificador.py
+
+class Calificador:
+    def __init__(self, ciclos_observacion=3):
+        self.observaciones = {}  # {id_agente: [excreciones]}
+        self.ciclos_observacion = ciclos_observacion
+
+    def observar(self, agentes):
+        for agente in agentes:
+            if agente.identificador not in self.observaciones:
+                self.observaciones[agente.identificador] = []
+
+            # Registrar excreción actual
+            self.observaciones[agente.identificador].append(agente.excrecion)
+
+            # Mantener solo los últimos N ciclos
+            self.observaciones[agente.identificador] = self.observaciones[agente.identificador][-self.ciclos_observacion:]
+
+            # Evaluar desempeño si hay suficientes ciclos
+            if len(self.observaciones[agente.identificador]) == self.ciclos_observacion:
+                excreciones = self.observaciones[agente.identificador]
+                if any(e for e in excreciones if e is not None and str(e).strip()):
+                    agente.calificacion = "verde"
+                else:
+                    agente.calificacion = "roja"
+
+                print(f"🏁 {agente.identificador} calificado como: {agente.calificacion}")
+
+### agentes/tipos/sublimes/sublime_base.py ###
+
+# calificador.py
+
+from agentes.tipos.sublimes.sublime_base import SublimeBase
+
+class Calificador(SublimeBase):
+    def __init__(self, identificador="CAL-001", x=0, y=0, z=0, ciclos_observacion=3):
+        super().__init__(identificador, x, y, z, funcion="calificador")
+        self.ciclos_observacion = ciclos_observacion
+        self.observaciones = {}  # {id_agente: [excreciones]}
+
+    def observar(self, territorio, agentes, ciclo):
+        for agente in agentes:
+            if agente.identificador not in self.observaciones:
+                self.observaciones[agente.identificador] = []
+
+            self.observaciones[agente.identificador].append(agente.excrecion)
+
+            # Mantener solo los últimos N ciclos
+            self.observaciones[agente.identificador] = self.observaciones[agente.identificador][-self.ciclos_observacion:]
+
+            # Evaluar desempeño si hay suficientes datos
+            if len(self.observaciones[agente.identificador]) == self.ciclos_observacion:
+                excreciones = self.observaciones[agente.identificador]
+                if any(e for e in excreciones if e is not None and str(e).strip()):
+                    agente.calificacion = "verde"
+                else:
+                    agente.calificacion = "roja"
+
+                print(f"🏁 {self.identificador} calificó a {agente.identificador} como: {agente.calificacion}")
+
+__all__ = ["Calificador"]
+
+### agentes/tipos/sublimes/metatron.py ###
+
+# metatron.py
+
+import csv
+from datetime import datetime
+from agentes.tipos.sublimes.sublime_base import SublimeBase
+
+class Metatron(SublimeBase):
+    def __init__(self, identificador="MET-001", x=0, y=0, z=0):
+        super().__init__(identificador, x, y, z, funcion="metatron")
+        self.reporte = []
+        self.ruta_csv = "datos/metatron.csv"
+
+        with open(self.ruta_csv, mode='w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(["ciclo", "agente", "funcion", "edad", "x", "y", "z", "recompensa_total", "calificacion"])
+
+    def observar(self, territorio, agentes, ciclo):
+        with open(self.ruta_csv, mode='a', newline='') as f:
+            writer = csv.writer(f)
+            for agente in agentes:
+                writer.writerow([
+                    ciclo,
+                    agente.identificador,
+                    getattr(agente, "funcion", "desconocida"),
+                    getattr(agente, "edad", 0),
+                    getattr(agente, "x", -1),
+                    getattr(agente, "y", -1),
+                    getattr(agente, "z", -1),
+                    getattr(agente, "recompensa_total", 0),
+                    getattr(agente, "calificacion", "N/A")
+                ])
+        print(f"👁️ {self.identificador} registró {len(agentes)} agentes en el ciclo {ciclo}")
+
+__all__ = ["Metatron"]
+
+### agentes/tipos/sublimes/mensajero.py ###
+
+# mensajero.py
+
+import csv
+import os
+from datetime import datetime
+from collections import defaultdict, Counter
+from agentes.tipos.sublimes.sublime_base import SublimeBase
+
+class Mensajero(SublimeBase):
+    def __init__(self, identificador="MSG-001", x=0, y=0, z=0, ruta_reporte="datos/metatron_mensajes.csv"):
+        super().__init__(identificador, x, y, z, funcion="mensajero")
+        self.reporte_path = ruta_reporte
+        os.makedirs(os.path.dirname(self.reporte_path), exist_ok=True)
+        self._inicializar_archivo()
+        self.historial = []
+
+    def _inicializar_archivo(self):
+        if not os.path.exists(self.reporte_path):
+            with open(self.reporte_path, mode="w", newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow([
+                    "timestamp",
+                    "ciclo",
+                    "tipo_mensaje",
+                    "posicion",
+                    "dato_hash",
+                    "emisor_visible"
+                ])
+
+    def observar(self, territorio, agentes, ciclo):
+        buzon_mensajes = territorio.buzon_mensajes
+        if not buzon_mensajes:
+            return
+
+        timestamp = datetime.utcnow().isoformat()
+
+        with open(self.reporte_path, mode="a", newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            for m in buzon_mensajes:
+                tipo = m.get("tipo", "desconocido")
+                x = m.get("x", "?")
+                y = m.get("y", "?")
+                z = m.get("z", "?")
+                posicion = f"({x}, {y}, {z})"
+                dato_hash = m.get("dato_util", "???")
+                emisor = m.get("emisor", "anónimo")
+
+                writer.writerow([
+                    timestamp,
+                    ciclo,
+                    tipo,
+                    posicion,
+                    dato_hash,
+                    emisor
+                ])
+                self.historial.append({
+                    "ciclo": ciclo,
+                    "emisor": emisor,
+                    "pos": (x, y, z),
+                    "tipo": tipo,
+                    "dato": dato_hash
+                })
+
+        print(f"📨 {self.identificador} registró {len(buzon_mensajes)} mensajes en el ciclo {ciclo}.")
+        self.detectar_patrones(ciclo)
+
+    def detectar_patrones(self, ciclo_actual):
+        ultimos = [m for m in self.historial if ciclo_actual - m["ciclo"] <= 5]  # Últimos 5 ciclos
+
+        emisores = Counter(m["emisor"] for m in ultimos)
+        zonas = Counter((m["pos"]) for m in ultimos)
+        tipos = Counter(m["tipo"] for m in ultimos)
+
+        if emisores:
+            top_emisor = emisores.most_common(1)[0]
+            print(f"👁️ {self.identificador} detecta emisor dominante: {top_emisor[0]} ({top_emisor[1]} mensajes)")
+
+        if zonas:
+            zona_caliente = zonas.most_common(1)[0]
+            print(f"🔥 {self.identificador} detecta zona activa: {zona_caliente[0]} ({zona_caliente[1]} mensajes)")
+
+        if tipos:
+            tipo_dominante = tipos.most_common(1)[0]
+            print(f"📡 {self.identificador} detecta mensaje dominante: tipo '{tipo_dominante[0]}' ({tipo_dominante[1]} ocurrencias)")
+
+__all__ = ["Mensajero"]
+
+### agentes/tipos/carnivoros/divisor_reproductor.py ###
+
+# divisor_reproductor.py
+
+import random
+import hashlib
+from datetime import datetime
+from sklearn.linear_model import LogisticRegression
+from agentes.tipos.carnivoros.carnivoro_base import CarnivoroBase
+from agentes.tipos.herbivoros.herbivoro import Herbivoro
+
+class DivisorReproductor(CarnivoroBase):
+    historial_combinaciones = []
+
+    def __init__(self, identificador=None, x=0, y=0, z=0):
+        super().__init__(identificador or f"DR-{random.randint(1000, 9999)}", x, y, z, funcion="divisor_reproductor")
+        self.memoria_acciones = []
+        self.modelo_ml = LogisticRegression()
+        self.X_train = []
+        self.y_train = []
+        self.entrenado = False
+        self.ciclos_sin_reproducir = 0
+
+    def entrenar_modelo(self):
+        if len(self.X_train) >= 5:
+            clases = set(self.y_train)
+            if len(clases) < 2:
+                opuesta = 0 if list(clases)[0] == 1 else 1
+                self.X_train.append([0, 0, 0])
+                self.y_train.append(opuesta)
+                print(f"🧪 {self.identificador} insertó muestra sintética para estabilizar el entrenamiento.")
+            self.modelo_ml.fit(self.X_train, self.y_train)
+            self.entrenado = True
+
+    def reforzar_modelo(self, edad, prioridad, exito=True):
+        etiqueta = 1 if exito else 0
+        self.X_train.append([edad, prioridad, random.randint(1, 100)])
+        self.y_train.append(etiqueta)
+        self.entrenar_modelo()
+
+    def buscar_pareja(self, agentes):
+        candidatos = [a for a in agentes if hasattr(a, "memoria") and a.memoria and a.funcion == "herbivoro"]
+        if len(candidatos) < 2:
+            return None, None
+        parejas = [(a1, a2) for i, a1 in enumerate(candidatos) for a2 in candidatos[i+1:]]
+        return random.choice(parejas) if parejas else (None, None)
+
+    def evaluar_objetivo(self, agente):
+        return agente.funcion == "herbivoro" and bool(agente.memoria)
+
+    def interactuar(self, objetivo, territorio):
+        # No se usa en este agente: usa parejas, no un solo objetivo
+        pass
+
+    def recombinar_codigo(self, agente_a, agente_b):
+        memoria_a = agente_a.memoria[-1] if agente_a.memoria else {}
+        memoria_b = agente_b.memoria[-1] if agente_b.memoria else {}
+
+        nuevo_x = (agente_a.x + agente_b.x) // 2
+        nuevo_y = (agente_a.y + agente_b.y) // 2
+        nuevo_z = agente_a.z
+        nuevo_id = f"H-{hashlib.sha1(f'{agente_a.identificador}{agente_b.identificador}'.encode()).hexdigest()[:6]}"
+
+        nuevo_agente = Herbivoro(nuevo_id, nuevo_x, nuevo_y, nuevo_z)
+        nuevo_agente.memoria = [memoria_a, memoria_b]
+        nuevo_agente.alianzas = agente_a.alianzas.union(agente_b.alianzas)
+        nuevo_agente.prioridad = (getattr(agente_a, "prioridad", 0) + getattr(agente_b, "prioridad", 0)) // 2
+        nuevo_agente.recompensa_total = 0
+
+        self.memoria_acciones.append({
+            "timestamp": datetime.utcnow().isoformat(),
+            "nuevo_id": nuevo_id,
+            "padres": (agente_a.identificador, agente_b.identificador),
+            "posicion": (nuevo_x, nuevo_y, nuevo_z),
+            "prioridades": (getattr(agente_a, "prioridad", 0), getattr(agente_b, "prioridad", 0)),
+            "memoria_a": memoria_a,
+            "memoria_b": memoria_b
+        })
+
+        DivisorReproductor.historial_combinaciones.append((agente_a.identificador, agente_b.identificador, nuevo_id))
+        print(f"🧬 {self.identificador} creó nuevo agente recombinado: {nuevo_id} desde {agente_a.identificador} + {agente_b.identificador}")
+        return nuevo_agente
+
+    def evaluar_estado(self, agentes):
+        herbivoros = [a for a in agentes if a.funcion == "herbivoro"]
+        if len(herbivoros) < 4:
+            return False
+        diversidad = len(set(a.identificador.split("-")[0] for a in herbivoros))
+        return diversidad > 1
+
+    def actuar(self, territorio, otros_agentes=None):
+        self.incrementar_edad()
+        self.ciclos_sin_reproducir += 1
+        agentes = otros_agentes or []
+
+        if not self.evaluar_estado(agentes):
+            print(f"🧬 {self.identificador} decide no actuar: baja diversidad o pocos agentes.")
+            return []
+
+        a1, a2 = self.buscar_pareja(agentes)
+        if not a1 or not a2:
+            print(f"⚠️ {self.identificador} no encontró suficientes agentes para recombinar.")
+            return []
+
+        if self.entrenado:
+            pred = self.modelo_ml.predict_proba([
+                [max(a1.edad, a2.edad), max(getattr(a1, "prioridad", 0), getattr(a2, "prioridad", 0)), random.randint(1, 100)]
+            ])[0][1]
+            if pred < 0.5:
+                print(f"🔬 {self.identificador} evitó recombinación con baja predicción de éxito ({pred:.2f})")
+                return []
+
+        nuevo = self.recombinar_codigo(a1, a2)
+        self.reforzar_modelo(max(a1.edad, a2.edad), max(getattr(a1, "prioridad", 0), getattr(a2, "prioridad", 0)), exito=True)
+        self.ciclos_sin_reproducir = 0
+        return [nuevo]
+
+__all__ = ["DivisorReproductor"]
+
+### agentes/tipos/carnivoros/destructor.py ###
+
+# destructor.py
+
+import random
+from agentes.tipos.carnivoros.carnivoro_base import CarnivoroBase
+
+class Destructor(CarnivoroBase):
+    def __init__(self, identificador="D-001", x=0, y=0, z=0):
+        super().__init__(identificador, x, y, z, funcion="destructor")
+
+    def evaluar_objetivo(self, agente):
+        return hasattr(agente, "calificacion") and agente.calificacion == "roja"
+
+    def interactuar(self, objetivo, territorio):
+        if hasattr(objetivo, "memoria"):
+            for entrada in objetivo.memoria:
+                if isinstance(entrada, dict) and "dato" in entrada:
+                    dato = entrada["dato"]
+                    if dato:
+                        try:
+                            territorio.dispersar_dato(dato, objetivo.x, objetivo.y, objetivo.z)
+                        except Exception as e:
+                            print(f"⚠️ Error al dispersar dato de {objetivo.identificador}: {e}")
+
+        self.log_memoria(
+            entrada=f"Agente {objetivo.identificador} con calificación roja",
+            resultado="Dispersado",
+            exitoso=True
+        )
+        print(f"💀 {self.identificador} dispersa al agente {objetivo.identificador} por calificación roja.")
+
+    def actuar(self, territorio, otros_agentes=None, ciclo=0):
+        self.incrementar_edad()
+        agentes = otros_agentes or []
+        sobrevivientes = []
+        dispersados = []
+
+        for agente in agentes:
+            if self.evaluar_objetivo(agente):
+                self.interactuar(agente, territorio)
+                dispersados.append(agente)
+            else:
+                sobrevivientes.append(agente)
+
+        return sobrevivientes
+
+    def puede_reproducirse(self):
+        return False
+
+    def reproducirse(self, nuevo_id):
+        raise NotImplementedError("El Destructor no puede reproducirse.")
+
+__all__ = ["Destructor"]
+
+### agentes/tipos/carnivoros/alquimista.py ###
+
+# alquimista.py
+
+import random
+from agentes.tipos.carnivoros.carnivoro_base import CarnivoroBase
+
+class Alquimista(CarnivoroBase):
+    def __init__(self, identificador, x, y, z):
+        super().__init__(identificador, x, y, z, funcion="alquimista")
+        self.mutaciones_realizadas = 0
+        self.max_mutaciones = 5
+
+    def evaluar_objetivo(self, agente):
+        return (
+            agente.funcion != "sublime" and
+            agente.identificador != self.identificador and
+            agente.z == self.z and
+            abs(agente.x - self.x) <= 1 and
+            abs(agente.y - self.y) <= 1
+        )
+
+    def interactuar(self, objetivo, territorio):
+        if not objetivo.memoria:
+            self.log_memoria("Sin memoria en objetivo", "No se pudo alterar", exitoso=False)
+            return
+
+        entrada = str(objetivo.memoria[-1])
+        tipo = "mutacion" if random.random() < 0.5 else "reparacion"
+        resultado = (
+            self.mutacion_simbolica(entrada)
+            if tipo == "mutacion"
+            else self.reparacion_basica(entrada)
+        )
+
+        objetivo.log_memoria(entrada, resultado, exitoso=True)
+        objetivo.memoria.append({
+            "ciclo": self.edad,
+            "tipo_alquimia": tipo,
+            "resultado": resultado
+        })
+        self.mutaciones_realizadas += 1
+
+        self.log_memoria(
+            entrada={"objetivo": objetivo.identificador, "tipo": tipo},
+            resultado=resultado,
+            exitoso=True
+        )
+        print(f"🧪 {self.identificador} alteró a {objetivo.identificador} → {resultado[:30]}...")
+
+    def mutacion_simbolica(self, texto):
+        simbolos = ["@", "#", "$", "%", "&", "*"]
+        return "".join(c if random.random() > 0.2 else random.choice(simbolos) for c in texto)
+
+    def reparacion_basica(self, texto):
+        return texto.replace("None", "").replace("null", "").replace("N/A", "").strip()
+
+    def puede_reproducirse(self):
+        return self.mutaciones_realizadas >= self.max_mutaciones
+
+    def reproducirse(self, nuevo_id):
+        nuevo_x = self.x + random.choice([-1, 0, 1])
+        nuevo_y = self.y + random.choice([-1, 0, 1])
+        nuevo_agente = Alquimista(nuevo_id, nuevo_x, nuevo_y, self.z)
+        print(f"🧬 {self.identificador} creó a {nuevo_agente.identificador} (nuevo alquimista)")
+        return nuevo_agente
+
+__all__ = ["Alquimista"]
+
+### agentes/tipos/carnivoros/carnivoro_base.py ###
+
+# carnivoro_base.py
+
+from agentes.agente_base import AgenteBase
+
+class CarnivoroBase(AgenteBase):
+    def __init__(self, identificador, x, y, z, funcion="carnivoro"):
+        super().__init__(identificador, x, y, z, funcion=funcion)
+        self.objetivo_actual = None
+        self.interacciones = 0
+        self.recompensa_total = 0
+
+    def buscar_objetivo(self, agentes):
+        """Busca agentes cercanos con los que pueda interactuar"""
+        candidatos = [
+            a for a in agentes
+            if a.identificador != self.identificador and abs(a.x - self.x) <= 2 and abs(a.y - self.y) <= 2 and a.z == self.z
+        ]
+        if candidatos:
+            self.objetivo_actual = candidatos[0]
+        else:
+            self.objetivo_actual = None
+        return self.objetivo_actual
+
+    def evaluar_objetivo(self, agente):
+        """Regla abstracta: cada carnívoro definirá si el objetivo es válido"""
+        raise NotImplementedError("Cada subclase debe definir cómo evalúa a su objetivo")
+
+    def actuar(self, territorio, otros_agentes=None):
+        """Acción base: buscar objetivo y decidir si se interactúa"""
+        self.incrementar_edad()
+        if not otros_agentes:
+            return
+
+        objetivo = self.buscar_objetivo(otros_agentes)
+        if objetivo and self.evaluar_objetivo(objetivo):
+            self.interactuar(objetivo, territorio)
+        else:
+            self.log_memoria(
+                entrada="Sin objetivo válido",
+                resultado="Esperando oportunidad",
+                exitoso=False
+            )
+
+    def interactuar(self, objetivo, territorio):
+        """Interacción base, que puede ser sobrescrita (absorber, dividir, destruir...)"""
+        raise NotImplementedError("La interacción debe ser implementada por la subclase")
+
+    def puede_reproducirse(self):
+        return False
+
+    def reproducirse(self, nuevo_id):
+        raise NotImplementedError("Este carnívoro no define su lógica de reproducción")
+
+__all__ = ["CarnivoroBase"]
+
+### agentes/tipos/herbivoros/completador.py ###
+
+# completador.py
+
+import random
+from agentes.tipos.herbivoros.herbivoro_base import HerbivoroBase
+
+class Completador(HerbivoroBase):
+    def __init__(self, identificador, x, y, z):
+        super().__init__(identificador, x, y, z, funcion="completador")
+        self.acciones_realizadas = 0
+
+    def actuar(self, territorio, otros_agentes=None):
+        self.incrementar_edad()
+        self.recibir_mensajes(territorio)
+
+        aliados = [a for a in (otros_agentes or []) if a.identificador in self.alianzas]
+        datos_csv = territorio.get_csv(self.z)
+        self.x, self.y = self.buscar_mejor_celda(datos_csv)
+
+        try:
+            celda = datos_csv[self.x][self.y]
+        except (IndexError, TypeError):
+            celda = None
+
+        if not celda or str(celda).strip() == "":
+            valor_predecido = self.predecir_valor(datos_csv)
+            if valor_predecido:
+                datos_csv[self.x][self.y] = valor_predecido
+                self.acciones_realizadas += 1
+                self.recompensa_total += 1
+                self.emitir_mensaje(territorio, valor_predecido, 1, "completado")
+                self.reforzar_modelo(self.x, self.y, valor_predecido, positivo=True)
+                self.log_memoria(
+                    entrada="Celda vacía detectada",
+                    resultado=f"Completado con: {valor_predecido}",
+                    exitoso=True
+                )
+                print(f"🧩 {self.identificador} completó {self.posicion} con: {valor_predecido}")
+            else:
+                self.reforzar_modelo(self.x, self.y, valor_predecido, positivo=False)
+                self.log_memoria(
+                    entrada="Celda vacía detectada",
+                    resultado="Sin valor predecido disponible",
+                    exitoso=False
+                )
+                print(f"⚠️ {self.identificador} no pudo completar {self.posicion}")
+        else:
+            self.reforzar_modelo(self.x, self.y, celda, positivo=False)
+            self.log_memoria(
+                entrada="Celda ya tenía valor",
+                resultado=f"Valor existente: {celda}",
+                exitoso=False
+            )
+            print(f"🔎 {self.identificador} encontró valor en {self.posicion}")
+
+    def predecir_valor(self, datos_csv):
+        muestras = []
+        for fila in datos_csv[max(0, self.x - 2):self.x + 3]:
+            for valor in fila[max(0, self.y - 2):self.y + 3]:
+                if valor and str(valor).strip():
+                    muestras.append(valor)
+        return random.choice(muestras) if muestras else None
+
+    def puede_reproducirse(self):
+        return self.acciones_realizadas >= 3
+
+    def reproducirse(self, nuevo_id):
+        nuevo_x = max(0, self.x + random.choice([-1, 0, 1]))
+        nuevo_y = max(0, self.y + random.choice([-1, 0, 1]))
+        nuevo_agente = Completador(nuevo_id, nuevo_x, nuevo_y, self.z)
+        nuevo_agente.memoria = self.memoria[-5:]
+        nuevo_agente.alianzas = set(self.alianzas)
+        print(f"🧬 {self.identificador} creó a {nuevo_agente.identificador} (nuevo completador)")
+        return nuevo_agente
+
+__all__ = ["Completador"]
+
+### agentes/tipos/herbivoros/topologia.py ###
+
+# topologia.py
+
+import random
+from agentes.tipos.herbivoros.herbivoro_base import HerbivoroBase
+from sklearn.linear_model import LogisticRegression
+
+class Topologia(HerbivoroBase):
+    def __init__(self, identificador, x, y, z, total_dimensiones):
+        super().__init__(identificador, x, y, z, funcion="topologia")
+        self.total_dimensiones = total_dimensiones
+        self.modelo = LogisticRegression()
+        self.entrenado = False
+        self.X_train = []
+        self.y_train = []
+
+    def explorar_z(self, territorio):
+        resultados = []
+        for zi in range(self.total_dimensiones):
+            datos = territorio.get_csv(zi)
+            score = self.evaluar_dataset(datos)
+            resultados.append((zi, score))
+        resultados.sort(key=lambda x: x[1], reverse=True)
+        mejor_z, mejor_score = resultados[0] if resultados else (self.z, 0)
+        return mejor_z, mejor_score
+
+    def evaluar_dataset(self, datos_csv):
+        if not datos_csv:
+            return 0
+        non_empty = sum(1 for fila in datos_csv for celda in fila if celda and str(celda).strip())
+        largo_total = sum(len(str(celda)) for fila in datos_csv for celda in fila if celda and str(celda).strip())
+        promedio = largo_total / non_empty if non_empty else 0
+        return promedio
+
+    def entrenar(self):
+        if len(self.X_train) >= 5 and len(set(self.y_train)) > 1:
+            self.modelo.fit(self.X_train, self.y_train)
+            self.entrenado = True
+            print(f"🤖 {self.identificador} ha entrenado su modelo de exploración Z.")
+
+    def reforzar(self, z, promedio, bueno=True):
+        self.X_train.append([z, promedio])
+        self.y_train.append(1 if bueno else 0)
+        self.entrenar()
+
+    def actuar(self, territorio, otros_agentes=None):
+        self.incrementar_edad()
+        mejor_z, score = self.explorar_z(territorio)
+
+        if mejor_z != self.z:
+            self.reforzar(mejor_z, score, bueno=True)
+            self.log_memoria(
+                entrada={"z_actual": self.z, "candidatos": self.total_dimensiones},
+                resultado={"nuevo_z": mejor_z, "score": score},
+                exitoso=True
+            )
+            print(f"🧭 {self.identificador} cruzó de Z{self.z} a Z{mejor_z} (score={score:.2f})")
+            self.z = mejor_z
+        else:
+            self.reforzar(self.z, score, bueno=False)
+            self.log_memoria(
+                entrada={"z_actual": self.z, "candidatos": self.total_dimensiones},
+                resultado={"nuevo_z": self.z, "score": score},
+                exitoso=False
+            )
+            print(f"🔍 {self.identificador} permanece en Z{self.z} (score={score:.2f})")
+
+        # Mensaje automático para otros agentes
+        mensaje = f"Mejor zona Z detectada: Z{mejor_z} con score {score:.2f}"
+        if otros_agentes:
+            for agente in otros_agentes:
+                self.emitir_mensaje(territorio, mensaje, 0, "z_topologia")
+
+__all__ = ["Topologia"]
+
+### agentes/tipos/herbivoros/herbivoro_base.py ###
+
+# herbivoro_base.py
+
+import random
+import hashlib
+from agentes.agente_base import AgenteBase
+from collections import defaultdict
+from sklearn.linear_model import LogisticRegression
+
+class HerbivoroBase(AgenteBase):
+    vocabulario_global = defaultdict(list)
+
+    def __init__(self, identificador, x, y, z, funcion="herbivoro"):
+        super().__init__(identificador, x, y, z, funcion=funcion)
+        self.prioridad = 0
+        self.modelo_ml = LogisticRegression()
+        self.entrenado = False
+        self.X_train = []
+        self.y_train = []
+        self.historial_beneficio_mensajes = set()
+
+    def recibir_mensajes(self, territorio):
+        mensajes_relevantes = [
+            m for m in territorio.buzon_mensajes
+            if m["z"] == self.z and abs(m["x"] - self.x) <= 2 and abs(m["y"] - self.y) <= 2
+        ]
+        if mensajes_relevantes:
+            mensaje_objetivo = random.choice(mensajes_relevantes)
+            self.x = mensaje_objetivo["x"]
+            self.y = mensaje_objetivo["y"]
+            print(f"📡 {self.identificador} recibió mensaje y se movió a ({self.x}, {self.y}, {self.z})")
+            self.recibir_mensaje(mensaje_objetivo)
+            self.historial_beneficio_mensajes.add(mensaje_objetivo["emisor"])
+
+    def emitir_mensaje(self, territorio, mensaje, recompensa, tipo_dato):
+        codificado = hashlib.sha1(str(mensaje).encode()).hexdigest()[:6]
+        HerbivoroBase.vocabulario_global[codificado].append((tipo_dato, recompensa))
+        territorio.buzon_mensajes.append({
+            "emisor": self.identificador,
+            "funcion": self.funcion,
+            "x": self.x,
+            "y": self.y,
+            "z": self.z,
+            "dato_util": codificado,
+            "original": mensaje,
+            "recompensa": recompensa,
+            "tipo_dato": tipo_dato,
+            "ciclo": self.edad,
+            "tipo": "descubrimiento"
+        })
+
+    def entrenar_modelo(self):
+        if len(self.X_train) >= 5:
+            clases = set(self.y_train)
+            if len(clases) < 2:
+                opuesta = 0 if list(clases)[0] == 1 else 1
+                self.X_train.append([0, 0, 0])
+                self.y_train.append(opuesta)
+                print(f"🧪 {self.identificador} insertó muestra sintética para estabilizar el entrenamiento.")
+            self.modelo_ml.fit(self.X_train, self.y_train)
+            self.entrenado = True
+
+    def reforzar_modelo(self, x, y, dato, positivo=True):
+        score = len(str(dato)) if dato else 0
+        self.X_train.append([x, y, score])
+        self.y_train.append(1 if positivo else 0)
+        self.entrenar_modelo()
+
+    def buscar_mejor_celda(self, datos_csv, evitar=None):
+        evitar = evitar or []
+        mejor_score = -1
+        mejor_pos = (self.x, self.y)
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                nx, ny = self.x + dx, self.y + dy
+                if (nx, ny, self.z) in evitar:
+                    continue
+                try:
+                    valor = datos_csv[nx][ny]
+                    score = len(str(valor)) if valor else 0
+                    if self.entrenado:
+                        score *= self.modelo_ml.predict_proba([[nx, ny, score]])[0][1]
+                    if score > mejor_score:
+                        mejor_score = score
+                        mejor_pos = (nx, ny)
+                except (IndexError, TypeError):
+                    continue
+        return mejor_pos
+
+    def obtener_contexto_ambiental(self, datos_csv, aliados):
+        celdas_utiles = 0
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                nx, ny = self.x + dx, self.y + dy
+                try:
+                    if datos_csv[nx][ny] and len(str(datos_csv[nx][ny])) > 5:
+                        celdas_utiles += 1
+                except (IndexError, TypeError):
+                    continue
+        aliados_cercanos = sum(
+            1 for a in aliados if abs(a.x - self.x) <= 2 and abs(a.y - self.y) <= 2 and a.z == self.z
+        )
+        return {"celdas_utiles": celdas_utiles, "alianzas_cercanas": aliados_cercanos}
+
+__all__ = ["HerbivoroBase"]
+
+### agentes/tipos/herbivoros/aritmetica.py ###
+
+# aritmetica.py
+
+import random
+import math
+from agentes.tipos.herbivoros.herbivoro_base import HerbivoroBase
+
+class Aritmetica(HerbivoroBase):
+    def __init__(self, identificador, x, y, z):
+        super().__init__(identificador, x, y, z, funcion="aritmetica")
+        self.operacion = self.operacion_basica  # Por ahora, usa cuadrado
+
+    def operacion_basica(self, valor):
+        try:
+            return float(valor) ** 2  # Ejemplo: eleva al cuadrado
+        except (ValueError, TypeError):
+            return None
+
+    def actuar(self, territorio, otros_agentes=None):
+        self.incrementar_edad()
+        self.recibir_mensajes(territorio)
+
+        aliados = [a for a in (otros_agentes or []) if a.identificador in self.alianzas]
+        ocupadas = [(a.x, a.y, a.z) for a in aliados]
+        datos_csv = territorio.get_csv(self.z)
+
+        self.x, self.y = self.buscar_mejor_celda(datos_csv, evitar=ocupadas)
+
+        try:
+            self.alimentacion = datos_csv[self.x][self.y]
+        except (IndexError, TypeError):
+            self.alimentacion = None
+
+        recompensa = 0
+        self.excrecion = None
+
+        if self.alimentacion:
+            resultado = self.operacion(self.alimentacion)
+            if resultado is not None:
+                self.excrecion = resultado
+                recompensa = len(str(resultado))
+                self.recompensa_total += recompensa
+                tipo_dato = type(self.alimentacion).__name__
+
+                self.emitir_mensaje(territorio, resultado, recompensa, tipo_dato)
+                self.reforzar_modelo(self.x, self.y, resultado, positivo=True)
+
+                print(f"➕ {self.identificador} procesó {self.alimentacion} → {resultado} en {self.posicion}")
+            else:
+                self.reforzar_modelo(self.x, self.y, self.alimentacion, positivo=False)
+                print(f"❌ {self.identificador} no pudo procesar {self.alimentacion} en {self.posicion}")
+        else:
+            self.reforzar_modelo(self.x, self.y, self.alimentacion, positivo=False)
+            print(f"🕳️ {self.identificador} no encontró datos válidos en {self.posicion}")
+
+        contexto = self.obtener_contexto_ambiental(datos_csv, aliados)
+        self.log_memoria(
+            entrada=self.alimentacion,
+            resultado={
+                "excrecion": self.excrecion,
+                "recompensa": recompensa,
+                "contexto": contexto
+            },
+            exitoso=recompensa > 0
+        )
+
+    def puede_reproducirse(self, umbral_recompensa=10):
+        return self.recompensa_total >= umbral_recompensa
+
+    def reproducirse(self, nuevo_id):
+        nuevo_x = max(0, self.x + random.choice([-1, 0, 1]))
+        nuevo_y = max(0, self.y + random.choice([-1, 0, 1]))
+        nuevo_agente = Aritmetica(nuevo_id, nuevo_x, nuevo_y, self.z)
+        nuevo_agente.memoria = self.memoria[-5:]
+        nuevo_agente.alianzas = set(self.alianzas)
+        print(f"🧬 {self.identificador} se ha reproducido como {nuevo_agente.identificador}")
+        return nuevo_agente
+
+__all__ = ["Aritmetica"]

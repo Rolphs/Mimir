@@ -1,0 +1,11 @@
+name: mimir
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13
+  - pandas
+  - numpy
+  - matplotlib
+  - scikit-learn
+  - fastapi
+  - uvicorn

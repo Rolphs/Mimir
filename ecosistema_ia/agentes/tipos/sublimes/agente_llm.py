@@ -25,14 +25,7 @@ class AgenteLLM(SublimeBase):
         prompt = f"ciclo {self.edad}"
         respuesta = generar_texto(prompt)
         self.excrecion = respuesta
-        territorio.buzon_mensajes.append({
-            "emisor": self.identificador,
-            "tipo": "llm",
-            "mensaje": respuesta,
-            "x": self.x,
-            "y": self.y,
-            "z": self.z,
-        })
+        self.broadcast_mensaje(territorio, respuesta, tipo="llm")
         print(f"🤖 {self.identificador} generó texto: {respuesta}")
 
 

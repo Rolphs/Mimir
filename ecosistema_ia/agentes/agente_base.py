@@ -1,9 +1,11 @@
-# agente_base.py
+"""Core base class for all Mimir agents."""
 
 import random
 from collections import deque
 
 class AgenteBase:
+    """Base behaviour shared by herbivores, carnivores and sublime agents."""
+
     def __init__(self, identificador, x, y, z, funcion="agente"):
         self.identificador = identificador
         self.x = x
@@ -54,10 +56,40 @@ class AgenteBase:
         })
 
     def enviar_mensaje(self, mensaje, receptor):
+        """Deliver a direct message to another agent."""
         receptor.recibir_mensaje((self.identificador, mensaje))
 
     def recibir_mensaje(self, mensaje):
         self.mensajeria.append(mensaje)
+
+    def broadcast_mensaje(self, territorio, contenido, tipo="informacion"):
+        """Append a message to the shared territory mailbox."""
+        territorio.buzon_mensajes.append({
+            "emisor": self.identificador,
+            "funcion": self.funcion,
+            "x": self.x,
+            "y": self.y,
+            "z": self.z,
+            "dato_util": contenido,
+            "tipo": tipo,
+            "ciclo": self.edad,
+        })
+
+    def mover(self, dx=0, dy=0, dz=0, territorio=None):
+        """Move the agent while keeping coordinates within the territory."""
+        self.x += dx
+        self.y += dy
+        self.z += dz
+        if territorio:
+            self.z = max(0, min(self.z, len(territorio.csvs) - 1))
+            datos = territorio.get_csv(self.z)
+            if datos:
+                self.x = max(0, min(self.x, len(datos) - 1))
+                fila_len = len(datos[self.x]) if 0 <= self.x < len(datos) else 0
+                self.y = max(0, min(self.y, fila_len - 1 if fila_len else 0))
+            else:
+                self.x = max(0, self.x)
+                self.y = max(0, self.y)
 
     def describir(self):
         return {
@@ -90,3 +122,6 @@ class AgenteBase:
         self.X_train.append(features)
         self.y_train.append(1 if etiqueta else 0)
         self.entrenar_modelo()
+
+
+__all__ = ["AgenteBase"]

@@ -8,7 +8,7 @@ can be analysed later.  Most of the code and comments are in Spanish.
 
 ```
 ecosistema_ia/
-├── api/              # (placeholders for FastAPI endpoints)
+├── api/              # FastAPI server exposing the SPS REST API
 ├── agentes/          # agent implementations
 ├── datasets/         # CSV data used by the territory
 ├── datos/            # output logs generated during execution
@@ -62,8 +62,25 @@ A `Territorio` component maintains an immutable CSV log and adjusts parameters l
 Agents evolve by rewards and natural selection, and visualisations progress from ASCII to interactive dashboards.
 
 
+## Symbolic Profile Styles API
+
+The module `ecosistema_ia.sps` translates symbolic profile tokens to design
+variables such as colours and fonts.  A small FastAPI server under
+`ecosistema_ia/api` exposes an endpoint that receives a profile token and
+returns the generated styles:
+
+```bash
+uvicorn ecosistema_ia.api.servidor:app --reload
+```
+
+Send a POST request to `/sps/styles` with a JSON body containing
+`cromotipo`, `ritmo_cognitivo`, `arquetipo_narrativo` and `estilo_perceptual`.
+
+The API responds with a dictionary of design variables that front-end
+frameworks can consume.
+
 ## Notes
 
-Many modules under `api/` and `visualizacion/` are placeholders for future
+Many modules under `visualizacion/` are still placeholders for future
 expansion. The current focus is the command line simulation found in
-`main.py`.
+`main.py` and the new SPS API.

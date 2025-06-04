@@ -51,6 +51,16 @@ of all agents into a single text file (`agentes/agentes.txt`) for inspection:
 ```
 python ecosistema_ia/texto_agentes.py
 ```
+## White Paper Highlights
+
+The "Mimir White Paper" describes a decentralized ecosystem where CSV files act as a multidimensional territory. Agents inhabit these files, modify them under evolutionary rules and compete for survival.
+
+Key categories include **herbívoros** (data cleaners), **carnívoros** (which consume other agents) and **sublimes** (observers). Regulators such as the Calificador, Divisor Reproductor and Destructor balance the population.
+
+A `Territorio` component maintains an immutable CSV log and adjusts parameters like agent density and mutation rate using machine learning. The early module **MAPS** (Motor de Adaptación Perceptual Simbótica) builds symbolic user profiles to adapt interfaces.
+
+Agents evolve by rewards and natural selection, and visualisations progress from ASCII to interactive dashboards.
+
 
 ## Notes
 

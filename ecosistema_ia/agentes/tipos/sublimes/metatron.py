@@ -1,6 +1,7 @@
 # metatron.py
 
 import csv
+import os
 from datetime import datetime
 from ecosistema_ia.agentes.tipos.sublimes.sublime_base import SublimeBase
 
@@ -9,6 +10,8 @@ class Metatron(SublimeBase):
         super().__init__(identificador, x, y, z, funcion="metatron")
         self.reporte = []
         self.ruta_csv = "datos/metatron.csv"
+
+        os.makedirs(os.path.dirname(self.ruta_csv), exist_ok=True)
 
         with open(self.ruta_csv, mode='w', newline='') as f:
             writer = csv.writer(f)

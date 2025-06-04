@@ -4,7 +4,7 @@ import csv
 import os
 from datetime import datetime
 from collections import defaultdict, Counter
-from agentes.tipos.sublimes.sublime_base import SublimeBase
+from ecosistema_ia.agentes.tipos.sublimes.sublime_base import SublimeBase
 
 class Mensajero(SublimeBase):
     def __init__(self, identificador="MSG-001", x=0, y=0, z=0, ruta_reporte="datos/metatron_mensajes.csv"):

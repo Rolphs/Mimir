@@ -4,8 +4,8 @@ import random
 import hashlib
 from datetime import datetime
 from sklearn.linear_model import LogisticRegression
-from agentes.tipos.carnivoros.carnivoro_base import CarnivoroBase
-from agentes.tipos.herbivoros.herbivoro import Herbivoro
+from ecosistema_ia.agentes.tipos.carnivoros.carnivoro_base import CarnivoroBase
+from ecosistema_ia.agentes.tipos.herbivoros.herbivoro import Herbivoro
 
 class DivisorReproductor(CarnivoroBase):
     historial_combinaciones = []

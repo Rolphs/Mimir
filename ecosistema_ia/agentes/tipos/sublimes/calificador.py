@@ -1,6 +1,6 @@
 """Agent that evaluates other agents' performance."""
 
-from agentes.tipos.sublimes.sublime_base import SublimeBase
+from ecosistema_ia.agentes.tipos.sublimes.sublime_base import SublimeBase
 
 
 class Calificador(SublimeBase):
@@ -30,3 +30,4 @@ class Calificador(SublimeBase):
                 print(f"🏁 {self.identificador} calificó a {agente.identificador} como: {agente.calificacion}")
 
 __all__ = ["Calificador"]
+

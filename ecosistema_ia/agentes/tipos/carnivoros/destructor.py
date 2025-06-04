@@ -1,7 +1,7 @@
 # destructor.py
 
 import random
-from agentes.tipos.carnivoros.carnivoro_base import CarnivoroBase
+from ecosistema_ia.agentes.tipos.carnivoros.carnivoro_base import CarnivoroBase
 
 class Destructor(CarnivoroBase):
     def __init__(self, identificador="D-001", x=0, y=0, z=0):

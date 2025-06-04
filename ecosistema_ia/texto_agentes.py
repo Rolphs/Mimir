@@ -1,19 +1,17 @@
-import os
+from pathlib import Path
 
-BASE_PATH = "agentes/tipos"
-OUTPUT_FILE = "agentes/agentes.txt"
+BASE_PATH = Path(__file__).resolve().parent / "agentes" / "tipos"
+OUTPUT_FILE = Path(__file__).resolve().parent / "agentes" / "agentes.txt"
 
-def extraer_codigo_agentes():
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as salida:
-        for tipo in os.listdir(BASE_PATH):
-            tipo_path = os.path.join(BASE_PATH, tipo)
-            if not os.path.isdir(tipo_path):
+def extraer_codigo_agentes() -> None:
+    with OUTPUT_FILE.open("w", encoding="utf-8") as salida:
+        for tipo_path in BASE_PATH.iterdir():
+            if not tipo_path.is_dir():
                 continue
-            for archivo in os.listdir(tipo_path):
-                if archivo.endswith(".py") and archivo != "__init__.py":
-                    ruta_archivo = os.path.join(tipo_path, archivo)
-                    salida.write(f"\n\n### {ruta_archivo} ###\n\n")
-                    with open(ruta_archivo, "r", encoding="utf-8") as f:
+            for archivo in tipo_path.iterdir():
+                if archivo.suffix == ".py" and archivo.name != "__init__.py":
+                    salida.write(f"\n\n### {archivo} ###\n\n")
+                    with archivo.open("r", encoding="utf-8") as f:
                         salida.write(f.read())
 
 if __name__ == "__main__":

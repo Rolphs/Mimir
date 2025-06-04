@@ -1,15 +1,22 @@
 import os
 import csv
+from pathlib import Path
 from typing import List, Dict
 from datetime import datetime
 from sklearn.linear_model import LinearRegression
+from ..config import DATA_DIR, DATASETS_DIR
 
 
 class Territorio:
-    def __init__(self, ruta_base="datasets", ruta_csv_intocable="datos/territorio.csv", ruta_eliminaciones="datos/logs/eliminaciones.csv"):
-        self.ruta_base = ruta_base
-        self.ruta_csv_intocable = ruta_csv_intocable
-        self.ruta_eliminaciones = ruta_eliminaciones
+    def __init__(
+        self,
+        ruta_base: Path = DATASETS_DIR,
+        ruta_csv_intocable: Path = DATA_DIR / "territorio.csv",
+        ruta_eliminaciones: Path = DATA_DIR / "logs" / "eliminaciones.csv",
+    ) -> None:
+        self.ruta_base = Path(ruta_base)
+        self.ruta_csv_intocable = Path(ruta_csv_intocable)
+        self.ruta_eliminaciones = Path(ruta_eliminaciones)
         self.csvs = self.cargar_datasets()
         self.buzon_mensajes = []  # 📬 Espacio compartido para comunicación entre agentes
         self.historial_estados = []
@@ -18,24 +25,22 @@ class Territorio:
 
     def cargar_datasets(self) -> List[List[List[str]]]:
         archivos = []
-        if not os.path.exists(self.ruta_base):
+        if not self.ruta_base.exists():
             print(f"⚠️ Ruta no encontrada: {self.ruta_base}")
             return archivos
 
         archivos_csv = []
-        for nombre_archivo in os.listdir(self.ruta_base):
-            if nombre_archivo.endswith(".csv"):
-                ruta_completa = os.path.join(self.ruta_base, nombre_archivo)
+        for archivo in self.ruta_base.iterdir():
+            if archivo.suffix == ".csv":
                 try:
-                    timestamp = os.path.getctime(ruta_completa)
+                    timestamp = archivo.stat().st_ctime
                 except OSError:
                     timestamp = 0
-                archivos_csv.append((timestamp, nombre_archivo))
+                archivos_csv.append((timestamp, archivo))
 
-        archivos_csv.sort(key=lambda x: (x[0], x[1]))
-        for _, nombre_archivo in archivos_csv:
-            ruta_completa = os.path.join(self.ruta_base, nombre_archivo)
-            with open(ruta_completa, newline='', encoding='utf-8') as f:
+        archivos_csv.sort(key=lambda x: (x[0], x[1].name))
+        for _, archivo in archivos_csv:
+            with archivo.open(newline='', encoding='utf-8') as f:
                 datos = [fila for fila in csv.reader(f)]
                 archivos.append(datos)
 
@@ -67,9 +72,9 @@ class Territorio:
         return vivos
 
     def registrar_eliminaciones_csv(self, eliminados, ciclo: int):
-        os.makedirs(os.path.dirname(self.ruta_eliminaciones), exist_ok=True)
-        nuevo = not os.path.exists(self.ruta_eliminaciones)
-        with open(self.ruta_eliminaciones, "a", newline='', encoding='utf-8') as f:
+        self.ruta_eliminaciones.parent.mkdir(parents=True, exist_ok=True)
+        nuevo = not self.ruta_eliminaciones.exists()
+        with self.ruta_eliminaciones.open("a", newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             if nuevo:
                 writer.writerow(["ciclo", "timestamp", "id", "recompensa_total", "edad", "posicion", "alianzas"])
@@ -91,9 +96,9 @@ class Territorio:
             "agentes": total_agentes
         }
         self.historial_estados.append(estado)
-        os.makedirs(os.path.dirname(self.ruta_csv_intocable), exist_ok=True)
-        nuevo = not os.path.exists(self.ruta_csv_intocable)
-        with open(self.ruta_csv_intocable, "a", newline='', encoding='utf-8') as f:
+        self.ruta_csv_intocable.parent.mkdir(parents=True, exist_ok=True)
+        nuevo = not self.ruta_csv_intocable.exists()
+        with self.ruta_csv_intocable.open("a", newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             if nuevo:
                 writer.writerow(["ciclo", "timestamp", "agentes"])

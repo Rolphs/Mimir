@@ -43,6 +43,12 @@ python -m ecosistema_ia.main
 
 Logs and CSV files will be written inside the `ecosistema_ia/datos` folder.
 
+`Metatron` ahora también produce archivos `metatron_heatmap.csv` y
+`metatron_semantics.csv`.  El primero resume la densidad de agentes por
+coordenada, permitiendo generar mapas de calor con la función
+`visualizacion.graficos.generar_heatmap`.  El segundo almacena tokens
+relevantes para analizar la evolución semántica del ecosistema.
+
 ### Extracting agent code
 
 The helper script `ecosistema_ia/texto_agentes.py` concatenates the source
@@ -81,6 +87,6 @@ frameworks can consume.
 
 ## Notes
 
-Many modules under `visualizacion/` are still placeholders for future
-expansion. The current focus is the command line simulation found in
-`main.py` and the new SPS API.
+Most modules under `visualizacion/` remain lightweight, but now include a
+utility to generarate heatmaps from Metatron logs. The main focus continues to
+be the command line simulation found in `main.py` and the SPS API.

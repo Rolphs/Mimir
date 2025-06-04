@@ -24,6 +24,8 @@ LOGS_DIR = DATA_DIR / "logs"
 # Rutas de archivos especiales
 CSV_TERRITORIO_PATH = DATA_DIR / "territorio.csv"
 CSV_METATRON_PATH = DATA_DIR / "metatron.csv"
+CSV_METATRON_HEATMAP_PATH = DATA_DIR / "metatron_heatmap.csv"
+CSV_METATRON_SEMANTICS_PATH = DATA_DIR / "metatron_semantics.csv"
 
 # Bandera para controlar visualización en consola
 MOSTRAR_INFO_CONSOLA = True

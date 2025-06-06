@@ -12,26 +12,43 @@ from ecosistema_ia.ml.optimizacion_territorio import estimar_ciclos_optimos
 from ecosistema_ia.config import LOGS_DIR
 
 def cargar_agentes_dinamicamente() -> list:
+    """Importa e instancia automáticamente todas las clases de agentes.
+
+    Cada agente recibe un identificador único en forma "XX-###" donde "XX" son
+    las primeras dos letras del nombre de la clase y el número se incrementa de
+    forma secuencial para cada instancia creada.
+    """
+
     agentes = []
+    contador = 1
     base_path = Path(__file__).resolve().parent / "agentes" / "tipos"
+
     for tipo_path in base_path.iterdir():
         if not tipo_path.is_dir():
             continue
+
         for archivo in tipo_path.iterdir():
-            if archivo.suffix == ".py" and archivo.name != "__init__.py":
-                nombre_modulo = archivo.stem
-                ruta_import = f"ecosistema_ia.agentes.tipos.{tipo_path.name}.{nombre_modulo}"
-                try:
-                    modulo = importlib.import_module(ruta_import)
-                    for nombre_clase, clase in inspect.getmembers(modulo, inspect.isclass):
-                        if hasattr(clase, "actuar") and callable(getattr(clase, "actuar")):
-                            identificador = f"{nombre_clase[:2].upper()}-001"
-                            instancia = clase(identificador, 0, 0, 0)
-                            agentes.append(instancia)
-                            print(f"✅ Cargado dinámicamente: {identificador}")
-                            break
-                except Exception as e:
-                    print(f"❌ Error al cargar {ruta_import}: {e}")
+            if archivo.suffix != ".py" or archivo.name == "__init__.py":
+                continue
+
+            nombre_modulo = archivo.stem
+            ruta_import = f"ecosistema_ia.agentes.tipos.{tipo_path.name}.{nombre_modulo}"
+
+            try:
+                modulo = importlib.import_module(ruta_import)
+
+                for nombre_clase, clase in inspect.getmembers(modulo, inspect.isclass):
+                    if clase.__module__ != ruta_import:
+                        continue
+                    if hasattr(clase, "actuar") and callable(getattr(clase, "actuar")):
+                        identificador = f"{nombre_clase[:2].upper()}-{contador:03d}"
+                        instancia = clase(identificador, 0, 0, 0)
+                        agentes.append(instancia)
+                        print(f"✅ Cargado dinámicamente: {identificador}")
+                        contador += 1
+            except Exception as e:
+                print(f"❌ Error al cargar {ruta_import}: {e}")
+
     return agentes
 
 def main(paralelo: bool = False):

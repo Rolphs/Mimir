@@ -49,6 +49,14 @@ coordenada, permitiendo generar mapas de calor con la función
 `visualizacion.graficos.generar_heatmap`.  El segundo almacena tokens
 relevantes para analizar la evolución semántica del ecosistema.
 
+### Dashboard
+
+Un tablero interactivo permite explorar visualmente la densidad de agentes y los tokens semánticos más frecuentes.  Tras generar los CSVs correspondientes, ejecútalo con:
+
+```bash
+python -m ecosistema_ia.visualizacion.dashboard
+```
+
 ### Extracting agent code
 
 The helper script `ecosistema_ia/texto_agentes.py` concatenates the source

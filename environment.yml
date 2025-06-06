@@ -9,3 +9,4 @@ dependencies:
   - scikit-learn
   - fastapi
   - uvicorn
+  - plotly

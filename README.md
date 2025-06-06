@@ -98,6 +98,17 @@ for row in previsualizar_csv("Episodes FAST.csv", n=3):
 
 These utilities report the dimensions of each dataset and return a small sample
 of rows for quick inspection.
+
+### Dataset API
+
+You can also query these helpers through the FastAPI server:
+
+```bash
+uvicorn ecosistema_ia.api.servidor:app --reload
+```
+
+* `GET /datasets` lists available CSV files.
+* `GET /datasets/preview?name=<file>&n=<rows>` shows the first ``n`` rows of a CSV (``n`` defaults to ``5``).
 ## White Paper Highlights
 
 The "Mimir White Paper" describes a decentralized ecosystem where CSV files act as a multidimensional territory. Agents inhabit these files, modify them under evolutionary rules and compete for survival.

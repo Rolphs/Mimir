@@ -1,10 +1,10 @@
-"""Small FastAPI server exposing SPS endpoints."""
+"""Small FastAPI server exposing SPS and dataset endpoints."""
 
 from fastapi import FastAPI
-from .endpoints import router as sps_router
+from .endpoints import router as api_router
 
 app = FastAPI(title="Mimir SPS API")
-app.include_router(sps_router)
+app.include_router(api_router)
 
 
 @app.get("/")

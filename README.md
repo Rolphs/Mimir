@@ -156,3 +156,9 @@ frameworks can consume.
 Most modules under `visualizacion/` remain lightweight, but now include a
 utility to generate heatmaps from Metatron logs. The main focus continues to
 be the command line simulation found in `main.py` and the SPS API.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+

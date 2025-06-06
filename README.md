@@ -23,7 +23,9 @@ from the `agentes/tipos` directory, instantiates observers such as the
 
 ## Requirements
 
-A minimal Conda environment specification is available in `environment.yml`:
+A minimal Conda environment specification is available in `environment.yml`.
+It relies on **Python 3.11**, so make sure that version is available before
+creating the environment:
 
 ```
 conda env create -f environment.yml

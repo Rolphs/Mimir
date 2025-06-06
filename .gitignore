@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.DS_Store
+
+# Logs under ecosistema_ia/datos
+ecosistema_ia/datos/logs/*.csv
+
+# Large dataset CSVs
+ecosistema_ia/datasets/*.csv

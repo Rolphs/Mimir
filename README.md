@@ -35,8 +35,9 @@ conda activate mimir
 The project only relies on standard libraries plus `pandas`, `numpy`,
 `matplotlib`, `scikit-learn`, `fastapi`, `uvicorn` and `plotly`.
 
-If you prefer a standard Python setup, the same dependencies are listed in
-`requirements.txt`. Install them with:
+If you prefer a standard Python setup, the same dependencies are listed with
+pinned versions in `requirements.txt`. This file mirrors the Conda
+environment so both installation methods remain in sync. Install them with:
 
 ```
 pip install -r requirements.txt

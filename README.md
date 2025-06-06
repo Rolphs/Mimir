@@ -71,6 +71,24 @@ of all agents into a single text file (`agentes/agentes.txt`) for inspection:
 ```
 python ecosistema_ia/texto_agentes.py
 ```
+
+### Inspecting datasets
+
+Small helpers under `ecosistema_ia.entorno.exploracion` make it easy to look at
+the CSVs bundled with the project.
+
+```python
+from ecosistema_ia.entorno.exploracion import listar_csvs, previsualizar_csv
+
+for info in listar_csvs():
+    print(f"{info['archivo']} -> {info['filas']} filas, {info['columnas']} columnas")
+
+for row in previsualizar_csv("Episodes FAST.csv", n=3):
+    print(row)
+```
+
+These utilities report the dimensions of each dataset and return a small sample
+of rows for quick inspection.
 ## White Paper Highlights
 
 The "Mimir White Paper" describes a decentralized ecosystem where CSV files act as a multidimensional territory. Agents inhabit these files, modify them under evolutionary rules and compete for survival.

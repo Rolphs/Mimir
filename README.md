@@ -110,6 +110,19 @@ uvicorn ecosistema_ia.api.servidor:app --reload
 
 * `GET /datasets` lists available CSV files.
 * `GET /datasets/preview?name=<file>&n=<rows>` shows the first ``n`` rows of a CSV (``n`` defaults to ``5``).
+
+## Testing
+
+The test suite is based on **pytest**. After installing the project
+dependencies, simply run:
+
+```bash
+pytest
+```
+
+`scikit-learn` must be available for the tests to succeed. The package is
+already listed in `requirements.txt`, so make sure all dependencies are
+installed before invoking `pytest`.
 ## White Paper Highlights
 
 The "Mimir White Paper" describes a decentralized ecosystem where CSV files act as a multidimensional territory. Agents inhabit these files, modify them under evolutionary rules and compete for survival.

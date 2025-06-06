@@ -132,6 +132,7 @@ Key categories include **herbívoros** (data cleaners), **carnívoros** (which c
 A `Territorio` component maintains an immutable CSV log and adjusts parameters like agent density and mutation rate using machine learning. The early module **MAPS** (Motor de Adaptación Perceptual Simbótica) builds symbolic user profiles to adapt interfaces.
 
 Agents evolve by rewards and natural selection, and visualisations progress from ASCII to interactive dashboards.
+Read the full [white paper](docs/white_paper.md) for additional details.
 
 
 ## Symbolic Profile Styles API

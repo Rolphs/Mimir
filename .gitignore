@@ -4,6 +4,10 @@ __pycache__/
 
 # Logs under ecosistema_ia/datos
 ecosistema_ia/datos/logs/*.csv
+ecosistema_ia/datos/*.csv
 
 # Large dataset CSVs
 ecosistema_ia/datasets/*.csv
+
+# Documentation source
+Mimir White Paper.rtf

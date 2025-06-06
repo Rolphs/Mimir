@@ -63,6 +63,42 @@ def cargar_agentes_dinamicamente() -> list:
 
     return agentes
 
+
+def ejecutar_ciclo(agentes, territorio, paralelo=False):
+    """Ejecuta un ciclo de simulación y devuelve la lista actualizada de agentes."""
+
+    nuevos_agentes = []
+
+    if paralelo:
+        agentes = run_parallel(agentes, territorio)
+    else:
+        for agente in list(agentes):
+            resultado = agente.actuar(territorio, otros_agentes=agentes)
+            if isinstance(resultado, list):
+                ids_actuales = {id(a) for a in agentes}
+                ids_resultado = {id(a) for a in resultado}
+                if ids_resultado.issubset(ids_actuales):
+                    agentes = resultado
+                else:
+                    for nuevo in resultado:
+                        if nuevo not in agentes:
+                            agentes.append(nuevo)
+
+    for agente in agentes:
+        if hasattr(agente, "puede_reproducirse") and agente.puede_reproducirse():
+            nuevo_id = f"{agente.identificador}-R{agente.edad}"
+            nuevo = agente.reproducirse(nuevo_id)
+            nuevos_agentes.append(nuevo)
+
+    agentes.extend(nuevos_agentes)
+
+    for agente in agentes:
+        if hasattr(agente, "recombinar") and callable(getattr(agente, "recombinar")):
+            nuevos = agente.recombinar(agentes)
+            agentes.extend(nuevos)
+
+    return agentes
+
 def main(paralelo: bool = False):
     print("🌱 Iniciando el ecosistema Mimir...\n")
 
@@ -92,26 +128,7 @@ def main(paralelo: bool = False):
             print(f"\n🔁 Ciclo {ciclo + 1} | Agentes activos: {len(agentes)}")
 
             try:
-                nuevos_agentes = []
-                if paralelo:
-                    agentes = run_parallel(agentes, territorio)
-                else:
-                    for agente in agentes:
-                        agente.actuar(territorio, otros_agentes=agentes)
-
-                for agente in agentes:
-                    if hasattr(agente, "puede_reproducirse") and agente.puede_reproducirse():
-                        nuevo_id = f"{agente.identificador}-R{agente.edad}"
-                        nuevo = agente.reproducirse(nuevo_id)
-                        nuevos_agentes.append(nuevo)
-
-                agentes.extend(nuevos_agentes)
-
-                # 🔁 Agentes con recombinación (como divisor_reproductor)
-                for agente in agentes:
-                    if hasattr(agente, "recombinar") and callable(getattr(agente, "recombinar")):
-                        nuevos = agente.recombinar(agentes)
-                        agentes.extend(nuevos)
+                agentes = ejecutar_ciclo(agentes, territorio, paralelo=paralelo)
 
             except Exception as e:
                 print(f"⚠️ Error durante el ciclo {ciclo + 1}: {e}")

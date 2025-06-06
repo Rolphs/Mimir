@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from ecosistema_ia.entorno.territorio import Territorio
+from ecosistema_ia.entorno.paralelo import run_parallel
 from ecosistema_ia.agentes.tipos.sublimes.metatron import Metatron
 from ecosistema_ia.agentes.tipos.sublimes.mensajero import Mensajero
 from ecosistema_ia.ml.optimizacion_territorio import estimar_ciclos_optimos
@@ -33,7 +34,7 @@ def cargar_agentes_dinamicamente() -> list:
                     print(f"❌ Error al cargar {ruta_import}: {e}")
     return agentes
 
-def main():
+def main(paralelo: bool = False):
     print("🌱 Iniciando el ecosistema Mimir...\n")
 
     # 1. Inicializar el Territorio
@@ -63,8 +64,13 @@ def main():
 
             try:
                 nuevos_agentes = []
+                if paralelo:
+                    agentes = run_parallel(agentes, territorio)
+                else:
+                    for agente in agentes:
+                        agente.actuar(territorio, otros_agentes=agentes)
+
                 for agente in agentes:
-                    agente.actuar(territorio, otros_agentes=agentes)
                     if hasattr(agente, "puede_reproducirse") and agente.puede_reproducirse():
                         nuevo_id = f"{agente.identificador}-R{agente.edad}"
                         nuevo = agente.reproducirse(nuevo_id)
@@ -94,4 +100,10 @@ def main():
     print("\n✅ Ecosistema finalizado. Reporte de Metatrón generado.")
 
 if __name__ == '__main__':
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Simulación del ecosistema Mimir')
+    parser.add_argument('--paralelo', action='store_true', help='Ejecutar agentes en paralelo')
+    args = parser.parse_args()
+
+    main(paralelo=args.paralelo)

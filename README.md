@@ -41,6 +41,12 @@ After installing the dependencies, run the ecosystem with:
 python -m ecosistema_ia.main
 ```
 
+Add the `--paralelo` flag to execute each agent in a separate process:
+
+```
+python -m ecosistema_ia.main --paralelo
+```
+
 Logs and CSV files will be written inside the `ecosistema_ia/datos` folder.
 
 `Metatron` ahora también produce archivos `metatron_heatmap.csv` y

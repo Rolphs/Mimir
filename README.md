@@ -31,7 +31,7 @@ conda activate mimir
 ```
 
 The project only relies on standard libraries plus `pandas`, `numpy`,
-`matplotlib`, `scikit-learn`, `fastapi` and `uvicorn`.
+`matplotlib`, `scikit-learn`, `fastapi`, `uvicorn` and `plotly`.
 
 ## Running
 

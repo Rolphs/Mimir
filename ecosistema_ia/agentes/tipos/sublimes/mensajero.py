@@ -3,7 +3,7 @@
 import csv
 import os
 from datetime import datetime
-from collections import defaultdict, Counter
+from collections import Counter
 from ecosistema_ia.agentes.tipos.sublimes.sublime_base import SublimeBase
 
 class Mensajero(SublimeBase):

@@ -16,3 +16,13 @@ def test_sequential_unique_ids():
     assert len(ids) == len(set(ids))
     numeros = sorted(int(re.search(r"-(\d{3})$", i).group(1)) for i in ids)
     assert numeros == list(range(1, len(ids) + 1))
+
+
+def test_base_classes_not_loaded():
+    agentes = cargar_agentes_dinamicamente()
+    nombres = [type(a).__name__ for a in agentes]
+    assert "HerbivoroBase" not in nombres
+    assert "CarnivoroBase" not in nombres
+    assert "SublimeBase" not in nombres
+    # topologia requires extra args; ensure no instantiation error occurs
+    assert "Topologia" not in nombres

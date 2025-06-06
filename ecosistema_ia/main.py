@@ -4,6 +4,8 @@ import inspect
 from datetime import datetime
 from pathlib import Path
 
+from ecosistema_ia.agentes.agente_base import AgenteBase
+
 from ecosistema_ia.entorno.territorio import Territorio
 from ecosistema_ia.entorno.paralelo import run_parallel
 from ecosistema_ia.agentes.tipos.sublimes.metatron import Metatron
@@ -22,6 +24,7 @@ def cargar_agentes_dinamicamente() -> list:
     agentes = []
     contador = 1
     base_path = Path(__file__).resolve().parent / "agentes" / "tipos"
+    clases_base = {"HerbivoroBase", "CarnivoroBase", "SublimeBase"}
 
     for tipo_path in base_path.iterdir():
         if not tipo_path.is_dir():
@@ -40,9 +43,18 @@ def cargar_agentes_dinamicamente() -> list:
                 for nombre_clase, clase in inspect.getmembers(modulo, inspect.isclass):
                     if clase.__module__ != ruta_import:
                         continue
+                    if not issubclass(clase, AgenteBase):
+                        continue
+                    if nombre_clase in clases_base:
+                        print(f"⚠️ Clase base {nombre_clase} ignorada")
+                        continue
                     if hasattr(clase, "actuar") and callable(getattr(clase, "actuar")):
                         identificador = f"{nombre_clase[:2].upper()}-{contador:03d}"
-                        instancia = clase(identificador, 0, 0, 0)
+                        try:
+                            instancia = clase(identificador, 0, 0, 0)
+                        except TypeError:
+                            print(f"⚠️ {nombre_clase} requiere argumentos adicionales y será ignorada")
+                            continue
                         agentes.append(instancia)
                         print(f"✅ Cargado dinámicamente: {identificador}")
                         contador += 1

@@ -154,5 +154,5 @@ frameworks can consume.
 ## Notes
 
 Most modules under `visualizacion/` remain lightweight, but now include a
-utility to generarate heatmaps from Metatron logs. The main focus continues to
+utility to generate heatmaps from Metatron logs. The main focus continues to
 be the command line simulation found in `main.py` and the SPS API.

@@ -4,15 +4,9 @@
 
 from pathlib import Path
 
-# Número de ciclos evolutivos iniciales
-CICLOS_INICIALES = 10
-
 # Parámetros generales del ecosistema
 TAMANO_TERRITORIO_X = 10
 TAMANO_TERRITORIO_Y = 10
-
-# Parámetros para agentes
-NUM_AGENTES_INICIALES = 5
 
 # Directorios base
 BASE_DIR = Path(__file__).resolve().parent

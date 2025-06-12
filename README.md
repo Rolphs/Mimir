@@ -120,12 +120,40 @@ inspection.
 You can also query these helpers through the FastAPI server:
 
 ```bash
-uvicorn ecosistema_ia.api.servidor:app --reload
+uvicorn ecosistema_ia.api.servidor:app --reload --port 8000
 ```
 
 * `GET /datasets` lists available CSV files.
 * `GET /datasets/preview?name=<file>&n=<rows>` shows the first ``n`` rows of a CSV
   (``n`` defaults to ``5``).
+
+#### Example usage
+
+```bash
+# List datasets
+curl http://localhost:8000/datasets
+
+# Preview a dataset
+curl "http://localhost:8000/datasets/preview?name=Episodes%20FAST.csv&n=3"
+```
+
+Expected responses are JSON documents like:
+
+```json
+{
+  "datasets": [
+    {"archivo": "Episodes FAST.csv", "filas": 1300, "columnas": 7}
+  ]
+}
+
+{
+  "preview": [
+    ["Client", "Country", "Date Month", "Uniques", "Time Watched Minutes", "Avg Min per Unique", "Sessions"],
+    ["Canela", "Albania", "Apr-2024", "18", "19.100000000000005", "1.0611111111111111", "35"],
+    ["Canela", "Algeria", "Apr-2024", "405", "267.0833333333338", "0.6594650205761317", "588"]
+  ]
+}
+```
 
 ## Testing
 

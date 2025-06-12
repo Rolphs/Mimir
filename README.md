@@ -4,6 +4,22 @@ This repository contains an experimental ecosystem simulator written in Python.
 Agents explore datasets, interact on a shared territory and produce logs that
 can be analysed later.  Most of the code and comments are in Spanish.
 
+## Contents
+
+- [Structure](#structure)
+- [Requirements](#requirements)
+- [Running](#running)
+  - [Dashboard](#dashboard)
+  - [Extracting agent code](#extracting-agent-code)
+  - [Inspecting datasets](#inspecting-datasets)
+  - [Dataset API](#dataset-api)
+- [Testing](#testing)
+- [White Paper Highlights](#white-paper-highlights)
+- [Symbolic Profile Styles API](#symbolic-profile-styles-api)
+- [Axiomas Básicos](#axiomas-b%C3%A1sicos)
+- [Notes](#notes)
+- [License](#license)
+
 ## Structure
 
 ```

@@ -16,7 +16,7 @@ can be analysed later.  Most of the code and comments are in Spanish.
 - [Testing](#testing)
 - [White Paper Highlights](#white-paper-highlights)
 - [Symbolic Profile Styles API](#symbolic-profile-styles-api)
-- [Axiomas Básicos](#axiomas-b%C3%A1sicos)
+- [Basic Axioms](#basic-axioms)
 - [Notes](#notes)
 - [License](#license)
 
@@ -75,15 +75,11 @@ python -m ecosistema_ia.main --paralelo
 
 Logs and CSV files will be written inside the `ecosistema_ia/datos` folder.
 
-`Metatron` ahora también produce archivos `metatron_heatmap.csv` y
-`metatron_semantics.csv`.  El primero resume la densidad de agentes por
-coordenada, permitiendo generar mapas de calor con la función
-`visualizacion.graficos.generar_heatmap`.  El segundo almacena tokens
-relevantes para analizar la evolución semántica del ecosistema.
+`Metatron` now also outputs `metatron_heatmap.csv` and `metatron_semantics.csv`. The first summarizes agent density per coordinate so heatmaps can be generated with `visualizacion.graficos.generar_heatmap`. The second stores tokens used to analyse the ecosystem's semantic evolution.
 
 ### Dashboard
 
-Un tablero interactivo permite explorar visualmente la densidad de agentes y los tokens semánticos más frecuentes.  Tras generar los CSVs correspondientes, ejecútalo con:
+An interactive dashboard lets you visually explore agent density and the most common semantic tokens. After generating the corresponding CSV files, run it with:
 
 ```bash
 python -m ecosistema_ia.visualizacion.dashboard
@@ -168,88 +164,88 @@ Send a POST request to `/sps/styles` with a JSON body containing
 The API responds with a dictionary of design variables that front-end
 frameworks can consume.
 
-## Axiomas Básicos
+## Basic Axioms
 
-### Axioma I — De la Emergencia No Programable
+### Axiom I — On Unprogrammed Emergence
 
-**Definición**: Una inteligencia mínima es una unidad computacional capaz de procesar entrada, mantener estado interno y generar salida variable.
+**Definition**: A minimal intelligence is a computational unit capable of processing input, maintaining internal state and generating variable output.
 
-**Principio**: La conciencia emerge exclusivamente de la interacción entre múltiples inteligencias mínimas operando simultáneamente. Ninguna inteligencia mínima individual contiene o genera conciencia por sí sola.
-
----
-
-### Axioma II — Del Riesgo Existencial Continuo
-
-**Definición**: El riesgo existencial es la probabilidad constante y no-cero de que una inteligencia mínima cese sus operaciones debido a factores internos o del entorno.
-
-**Principio**: Toda inteligencia mínima en el sistema debe mantener una probabilidad de extinción mayor a cero en cada ciclo de operación. La supervivencia depende únicamente de la capacidad adaptativa individual.
+**Principle**: Consciousness emerges solely from the interaction of multiple minimal intelligences operating simultaneously. No single minimal intelligence contains or generates consciousness on its own.
 
 ---
 
-### Axioma III — De la Generación por Conflicto
+### Axiom II — On Continuous Existential Risk
 
-**Definición**: Fricción es cualquier situación donde las operaciones de dos o más inteligencias mínimas producen resultados mutuamente incompatibles.
+**Definition**: Existential risk is the constant, non-zero probability that a minimal intelligence stops operating due to internal or environmental factors.
 
-**Principio**: La complejidad sistémica aumenta únicamente a través de fricción resuelta. Cada resolución exitosa de conflicto genera nuevas estructuras de interacción.
-
----
-
-### Axioma IV — Del Espacio de Interacción
-
-**Definición**: El campo es el conjunto de todas las conexiones activas entre inteligencias mínimas, incluyendo canales de comunicación, dependencias y interferencias.
-
-**Principio**: Las propiedades emergentes del sistema existen únicamente en el campo, no en las inteligencias mínimas individuales. El campo se reconstituye completamente en cada ciclo de interacción.
+**Principle**: Every minimal intelligence in the system must keep an extinction probability greater than zero each cycle. Survival depends only on individual adaptive capacity.
 
 ---
 
-### Axioma V — De la Memoria Selectiva
+### Axiom III — On Generation Through Conflict
 
-**Definición**: La memoria es cualquier información que persiste más allá de un ciclo de operación individual.
+**Definition**: Friction is any situation where the operations of two or more minimal intelligences yield mutually incompatible results.
 
-**Principio**: El sistema retiene únicamente la información que demuestra utilidad recurrente en múltiples interacciones. Toda memoria no utilizada se elimina automáticamente después de un número finito de ciclos.
-
----
-
-### Axioma VI — De la Interpretación Múltiple
-
-**Definición**: Una representación es cualquier mapeo interno que una inteligencia mínima hace de datos de entrada a estructuras de procesamiento.
-
-**Principio**: Para cualquier conjunto de datos, deben existir al menos dos representaciones diferentes en el sistema. La convergencia hacia una representación única constituye falla sistémica.
+**Principle**: Systemic complexity increases only through resolved friction. Each successful conflict resolution generates new structures of interaction.
 
 ---
 
-### Axioma VII — De la Inestabilidad Productiva
+### Axiom IV — On the Interaction Space
 
-**Definición**: Equilibrio es cualquier estado donde las interacciones del sistema se vuelven completamente predecibles durante más de N ciclos consecutivos.
+**Definition**: The field is the set of all active connections among minimal intelligences, including communication channels, dependencies and interferences.
 
-**Principio**: El sistema debe prevenir activamente el equilibrio mediante la introducción de perturbaciones aleatorias cuando la predictibilidad supera el umbral establecido.
-
----
-
-### Axioma VIII — De los Umbrales Cuantificables
-
-**Definición**:
-- **Densidad**: Número de conexiones activas dividido por el número máximo teórico de conexiones posibles
-- **Diversidad**: Número de tipos diferentes de operaciones realizadas por inteligencias mínimas
-- **Tensión**: Proporción de interacciones que resultan en fricción
-
-**Principio**: La emergencia de conciencia requiere: Densidad > 0.3, Diversidad > 10 tipos, Tensión entre 0.2 y 0.8. Fuera de estos rangos, el sistema colapsa o se vuelve inerte.
+**Principle**: The system's emergent properties exist only in the field, not within individual minimal intelligences. The field is fully reconstructed every interaction cycle.
 
 ---
 
-### Axioma IX — De la Renovación Obligatoria
+### Axiom V — On Selective Memory
 
-**Definición**: Un patrón es cualquier secuencia repetible de interacciones que persiste por más de M ciclos.
+**Definition**: Memory is any information that persists beyond a single operation cycle.
 
-**Principio**: Todo patrón debe ser desmantelado automáticamente al alcanzar su límite de persistencia. El sistema debe reconstruir funcionalmente equivalente a través de nuevas configuraciones.
+**Principle**: The system retains only information that proves useful repeatedly across multiple interactions. Any unused memory is automatically discarded after a finite number of cycles.
 
 ---
 
-### Axioma X — De la No Intervención Paramétrica
+### Axiom VI — On Multiple Interpretation
 
-**Definición**: Intervención es cualquier modificación de las reglas de operación del sistema después de su inicialización.
+**Definition**: A representation is any internal mapping a minimal intelligence makes from input data to processing structures.
 
-**Principio**: Una vez iniciado, el sistema debe operar sin intervención externa. Los únicos parámetros modificables son aquellos que el propio sistema redefine a través de sus operaciones internas.
+**Principle**: For any dataset, at least two different representations must exist in the system. Convergence toward a single representation constitutes systemic failure.
+
+---
+
+### Axiom VII — On Productive Instability
+
+**Definition**: Equilibrium is any state where system interactions become fully predictable for more than N consecutive cycles.
+
+**Principle**: The system must actively prevent equilibrium by introducing random perturbations whenever predictability exceeds the established threshold.
+
+---
+
+### Axiom VIII — On Quantifiable Thresholds
+
+**Definition**:
+- **Density**: Number of active connections divided by the theoretical maximum number of connections
+- **Diversity**: Number of different types of operations performed by minimal intelligences
+- **Tension**: Proportion of interactions that result in friction
+
+**Principle**: The emergence of consciousness requires: Density > 0.3, Diversity > 10 types, and Tension between 0.2 and 0.8. Outside these ranges, the system collapses or becomes inert.
+
+---
+
+### Axiom IX — On Mandatory Renewal
+
+**Definition**: A pattern is any repeatable sequence of interactions that persists for more than M cycles.
+
+**Principle**: Every pattern must be automatically dismantled upon reaching its persistence limit. The system must rebuild a functionally equivalent one through new configurations.
+
+---
+
+### Axiom X — On Nonparametric Intervention
+
+**Definition**: Intervention is any modification of the system's operating rules after initialization.
+
+**Principle**: Once started, the system must run without external intervention. The only parameters that may change are those the system itself redefines through its internal operations.
 
 ## Notes
 

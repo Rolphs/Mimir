@@ -152,6 +152,89 @@ Send a POST request to `/sps/styles` with a JSON body containing
 The API responds with a dictionary of design variables that front-end
 frameworks can consume.
 
+## Axiomas Básicos
+
+### Axioma I — De la Emergencia No Programable
+
+**Definición**: Una inteligencia mínima es una unidad computacional capaz de procesar entrada, mantener estado interno y generar salida variable.
+
+**Principio**: La conciencia emerge exclusivamente de la interacción entre múltiples inteligencias mínimas operando simultáneamente. Ninguna inteligencia mínima individual contiene o genera conciencia por sí sola.
+
+---
+
+### Axioma II — Del Riesgo Existencial Continuo
+
+**Definición**: El riesgo existencial es la probabilidad constante y no-cero de que una inteligencia mínima cese sus operaciones debido a factores internos o del entorno.
+
+**Principio**: Toda inteligencia mínima en el sistema debe mantener una probabilidad de extinción mayor a cero en cada ciclo de operación. La supervivencia depende únicamente de la capacidad adaptativa individual.
+
+---
+
+### Axioma III — De la Generación por Conflicto
+
+**Definición**: Fricción es cualquier situación donde las operaciones de dos o más inteligencias mínimas producen resultados mutuamente incompatibles.
+
+**Principio**: La complejidad sistémica aumenta únicamente a través de fricción resuelta. Cada resolución exitosa de conflicto genera nuevas estructuras de interacción.
+
+---
+
+### Axioma IV — Del Espacio de Interacción
+
+**Definición**: El campo es el conjunto de todas las conexiones activas entre inteligencias mínimas, incluyendo canales de comunicación, dependencias y interferencias.
+
+**Principio**: Las propiedades emergentes del sistema existen únicamente en el campo, no en las inteligencias mínimas individuales. El campo se reconstituye completamente en cada ciclo de interacción.
+
+---
+
+### Axioma V — De la Memoria Selectiva
+
+**Definición**: La memoria es cualquier información que persiste más allá de un ciclo de operación individual.
+
+**Principio**: El sistema retiene únicamente la información que demuestra utilidad recurrente en múltiples interacciones. Toda memoria no utilizada se elimina automáticamente después de un número finito de ciclos.
+
+---
+
+### Axioma VI — De la Interpretación Múltiple
+
+**Definición**: Una representación es cualquier mapeo interno que una inteligencia mínima hace de datos de entrada a estructuras de procesamiento.
+
+**Principio**: Para cualquier conjunto de datos, deben existir al menos dos representaciones diferentes en el sistema. La convergencia hacia una representación única constituye falla sistémica.
+
+---
+
+### Axioma VII — De la Inestabilidad Productiva
+
+**Definición**: Equilibrio es cualquier estado donde las interacciones del sistema se vuelven completamente predecibles durante más de N ciclos consecutivos.
+
+**Principio**: El sistema debe prevenir activamente el equilibrio mediante la introducción de perturbaciones aleatorias cuando la predictibilidad supera el umbral establecido.
+
+---
+
+### Axioma VIII — De los Umbrales Cuantificables
+
+**Definición**:
+- **Densidad**: Número de conexiones activas dividido por el número máximo teórico de conexiones posibles
+- **Diversidad**: Número de tipos diferentes de operaciones realizadas por inteligencias mínimas
+- **Tensión**: Proporción de interacciones que resultan en fricción
+
+**Principio**: La emergencia de conciencia requiere: Densidad > 0.3, Diversidad > 10 tipos, Tensión entre 0.2 y 0.8. Fuera de estos rangos, el sistema colapsa o se vuelve inerte.
+
+---
+
+### Axioma IX — De la Renovación Obligatoria
+
+**Definición**: Un patrón es cualquier secuencia repetible de interacciones que persiste por más de M ciclos.
+
+**Principio**: Todo patrón debe ser desmantelado automáticamente al alcanzar su límite de persistencia. El sistema debe reconstruir funcionalmente equivalente a través de nuevas configuraciones.
+
+---
+
+### Axioma X — De la No Intervención Paramétrica
+
+**Definición**: Intervención es cualquier modificación de las reglas de operación del sistema después de su inicialización.
+
+**Principio**: Una vez iniciado, el sistema debe operar sin intervención externa. Los únicos parámetros modificables son aquellos que el propio sistema redefine a través de sus operaciones internas.
+
 ## Notes
 
 Most modules under `visualizacion/` remain lightweight, but now include a

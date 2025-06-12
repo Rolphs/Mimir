@@ -311,3 +311,13 @@ heatmaps from Metatron logs. The main focus continues to be the command line sim
 This project is licensed under the [MIT License](LICENSE).
 
 
+## Contributing
+
+The easiest way to contribute is to follow these steps:
+
+1. **Fork and clone** this repository.
+2. **Set up the environment** using `environment.yml` or `requirements.txt`.
+3. **Run** `pytest` to verify everything works as expected.
+4. **Open a pull request** with your proposed changes.
+
+

@@ -24,7 +24,7 @@ def cargar_agentes_dinamicamente() -> list:
     agentes = []
     contador = 1
     base_path = Path(__file__).resolve().parent / "agentes" / "tipos"
-    clases_base = {"HerbivoroBase", "CarnivoroBase", "SublimeBase"}
+    clases_base = {"HerbivoroBase", "CarnivoroBase", "SublimeBase", "OmnivoroBase"}
 
     for tipo_path in base_path.iterdir():
         if not tipo_path.is_dir():

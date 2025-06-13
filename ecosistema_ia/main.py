@@ -52,7 +52,8 @@ def cargar_agentes_dinamicamente() -> list:
                     if nombre_clase in clases_base:
                         print(f"⚠️ Clase base {nombre_clase} ignorada")
                         continue
-                    if hasattr(clase, "actuar") and callable(getattr(clase, "actuar")):
+                    tiene_actuar = "actuar" in clase.__dict__ or clase.actuar is not AgenteBase.actuar
+                    if tiene_actuar and callable(getattr(clase, "actuar", None)):
                         identificador = f"{nombre_clase[:2].upper()}-{contador:03d}"
                         try:
                             instancia = clase(identificador, 0, 0, 0)
@@ -85,7 +86,8 @@ def cargar_agentes_dinamicamente() -> list:
                     if nombre_clase in clases_base:
                         print(f"⚠️ Clase base {nombre_clase} ignorada")
                         continue
-                    if hasattr(clase, "actuar") and callable(getattr(clase, "actuar")):
+                    tiene_actuar = "actuar" in clase.__dict__ or clase.actuar is not AgenteBase.actuar
+                    if tiene_actuar and callable(getattr(clase, "actuar", None)):
                         identificador = f"{nombre_clase[:2].upper()}-{contador:03d}"
                         try:
                             instancia = clase(identificador, 0, 0, 0)

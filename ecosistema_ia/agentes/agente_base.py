@@ -1,6 +1,5 @@
 """Core base class for all Mimir agents."""
 
-import random
 from collections import deque
 
 class AgenteBase:

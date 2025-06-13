@@ -8,6 +8,7 @@ from ecosistema_ia.agentes.agente_base import AgenteBase
 
 from ecosistema_ia.entorno.territorio import Territorio
 from ecosistema_ia.entorno.paralelo import run_parallel
+from ecosistema_ia.entorno.meta_regulador import MetaRegulador
 from ecosistema_ia.agentes.tipos.sublimes.metatron import Metatron
 from ecosistema_ia.agentes.tipos.sublimes.mensajero import Mensajero
 from ecosistema_ia.ml.optimizacion_territorio import estimar_ciclos_optimos
@@ -148,6 +149,7 @@ def main(paralelo: bool = False):
     # 3. Inicializar observadores
     metatron = Metatron()
     metatron_mensajes = Mensajero()
+    meta_regulador = MetaRegulador()
 
     # 4. Preparar archivo de log de ciclos
     log_file = LOGS_DIR / "ciclos.csv"
@@ -172,6 +174,7 @@ def main(paralelo: bool = False):
             # Observadores
             metatron.observar(territorio, agentes, ciclo + 1)
             metatron_mensajes.observar(territorio, agentes, ciclo + 1)
+            meta_regulador.evaluar(territorio, agentes)
 
             # Regulación del territorio
             agentes = territorio.regular(agentes, ciclo=ciclo + 1)

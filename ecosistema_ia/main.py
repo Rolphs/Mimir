@@ -23,19 +23,55 @@ def cargar_agentes_dinamicamente() -> list:
 
     agentes = []
     contador = 1
-    base_path = Path(__file__).resolve().parent / "agentes" / "tipos"
+    base_agentes = Path(__file__).resolve().parent / "agentes" / "tipos"
+    plugins_path = Path(__file__).resolve().parent / "plugins"
     clases_base = {"HerbivoroBase", "CarnivoroBase", "SublimeBase", "OmnivoroBase"}
 
-    for tipo_path in base_path.iterdir():
-        if not tipo_path.is_dir():
-            continue
+    # Buscar agentes bajo ecosistema_ia/agentes/tipos
+    if base_agentes.exists():
+        for tipo_path in base_agentes.iterdir():
+            if not tipo_path.is_dir():
+                continue
 
-        for archivo in tipo_path.iterdir():
+            for archivo in tipo_path.iterdir():
+                if archivo.suffix != ".py" or archivo.name == "__init__.py":
+                    continue
+
+                nombre_modulo = archivo.stem
+                ruta_import = f"ecosistema_ia.agentes.tipos.{tipo_path.name}.{nombre_modulo}"
+
+            try:
+                modulo = importlib.import_module(ruta_import)
+
+                for nombre_clase, clase in inspect.getmembers(modulo, inspect.isclass):
+                    if clase.__module__ != ruta_import:
+                        continue
+                    if not issubclass(clase, AgenteBase):
+                        continue
+                    if nombre_clase in clases_base:
+                        print(f"⚠️ Clase base {nombre_clase} ignorada")
+                        continue
+                    if hasattr(clase, "actuar") and callable(getattr(clase, "actuar")):
+                        identificador = f"{nombre_clase[:2].upper()}-{contador:03d}"
+                        try:
+                            instancia = clase(identificador, 0, 0, 0)
+                        except TypeError:
+                            print(f"⚠️ {nombre_clase} requiere argumentos adicionales y será ignorada")
+                            continue
+                        agentes.append(instancia)
+                        print(f"✅ Cargado dinámicamente: {identificador}")
+                        contador += 1
+            except Exception as e:
+                print(f"❌ Error al cargar {ruta_import}: {e}")
+
+    # Buscar agentes adicionales bajo ecosistema_ia/plugins
+    if plugins_path.exists():
+        for archivo in plugins_path.iterdir():
             if archivo.suffix != ".py" or archivo.name == "__init__.py":
                 continue
 
             nombre_modulo = archivo.stem
-            ruta_import = f"ecosistema_ia.agentes.tipos.{tipo_path.name}.{nombre_modulo}"
+            ruta_import = f"ecosistema_ia.plugins.{nombre_modulo}"
 
             try:
                 modulo = importlib.import_module(ruta_import)

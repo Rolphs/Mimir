@@ -1,9 +1,10 @@
 import csv
+import random
 from pathlib import Path
 from typing import List, Dict
 from datetime import datetime
 from sklearn.linear_model import LinearRegression
-from ..config import DATA_DIR, DATASETS_DIR
+from ..config import DATA_DIR, DATASETS_DIR, PROB_EXTINCION
 
 
 class Territorio:
@@ -141,6 +142,19 @@ class Territorio:
         print(f"📊 Regulando ecosistema | Ciclo {ciclo} | Agentes: {len(agentes)}")
         self.registrar_estado_csv(ciclo, len(agentes))
         self.entrenar_modelo_territorio()
+
+        # Riesgo de extinción (Axioma II)
+        sobrevivientes = []
+        extintos = []
+        for a in agentes:
+            if random.random() < PROB_EXTINCION:
+                extintos.append(a)
+            else:
+                sobrevivientes.append(a)
+        if extintos:
+            print(f"💥 {len(extintos)} agentes desaparecieron por azar.")
+            self.registrar_eliminaciones_csv(extintos, ciclo)
+        agentes = sobrevivientes
         pred = self.get_prediccion_poblacion(ciclo + 1)
         if pred != -1 and len(agentes) > pred * 1.2:
             print(f"⚠️ Sobrepoblación detectada. Limpiando con umbral más alto.")

@@ -16,7 +16,7 @@ code and comments are in Spanish.
 - [Testing](#testing)
 - [White Paper Highlights](#white-paper-highlights)
 - [Symbolic Profile Styles API](#symbolic-profile-styles-api)
-- [Mimir como Arquitectura Agentic](#mimir-como-arquitectura-agentic)
+- [Mimir as an Agentic Architecture](#mimir-as-an-agentic-architecture)
 - [Basic Axioms](#basic-axioms)
 - [Notes](#notes)
 - [License](#license)
@@ -172,13 +172,13 @@ The "Mimir White Paper" describes a decentralized ecosystem where CSV files act 
 multidimensional territory. Agents inhabit these files, modify them under evolutionary rules and
 compete for survival.
 
-Key categories include **herbívoros** (data cleaners), **carnívoros** (which consume other agents)
-and **sublimes** (observers). Regulators such as the Calificador, Divisor Reproductor and Destructor
-balance the population.
+A few basic agent categories help structure the ecosystem: **herbivores** act as data cleaners,
+**carnivores** consume other agents and **sublime** agents observe the territory. Regulators such as
+the Qualifier, Reproductive Divider and Destructor keep the population in balance.
 
-A `Territorio` component maintains an immutable CSV log and adjusts parameters like agent density
-and mutation rate using machine learning. The early module **MAPS** (Motor de Adaptación Perceptual
-Simbótica) builds symbolic user profiles to adapt interfaces.
+A component called `Territorio` maintains an immutable CSV log and adjusts parameters such as agent
+density and mutation rate using machine learning. The early module **MAPS** (Symbiotic Perceptual
+Adaptation Engine) builds symbolic user profiles to adapt interfaces.
 
 Agents evolve by rewards and natural selection, and visualisations progress from ASCII to
 interactive dashboards. Read the full [white paper](docs/white_paper.md) for additional details.
@@ -200,43 +200,43 @@ Send a POST request to `/sps/styles` with a JSON body containing `cromotipo`, `r
 
 The API responds with a dictionary of design variables that front-end frameworks can consume.
 
-## Mimir como Arquitectura Agentic
+## Mimir as an Agentic Architecture
 
-1️⃣ **Naturaleza central**
+1️⃣ **Central nature**
 
-Mimir es un sistema evolutivo y simbiótico donde las unidades básicas son inteligencias mínimas autónomas. No existe un control central y la conciencia, si surge, emerge del campo colectivo.
+Mimir is an evolutionary, symbiotic system where the basic units are minimal autonomous intelligences. There is no central control and any consciousness that arises emerges from the collective field.
 
-2️⃣ **Estructura del sistema**
+2️⃣ **System structure**
 
-* **Agente (Inteligencia mínima)**: procesa entrada, mantiene estado interno, genera salida variable y posee riesgo constante de extinción.
-* **Campo (Field)**: espacio donde ocurren las interacciones, con conexiones activas y fricciones.
-* **Meta-Regulador**: supervisa densidad, diversidad y tensión, introduciendo perturbaciones para evitar el equilibrio estable.
+* **Agent (Minimal intelligence)**: processes input, maintains internal state, produces variable output and carries a constant risk of extinction.
+* **Field**: the space where interactions occur, featuring active connections and friction.
+* **Meta-Regulator**: oversees density, diversity and tension, introducing perturbations to avoid stable equilibrium.
 
-3️⃣ **Dinámica de operación**
+3️⃣ **Operating dynamics**
 
-Fricción y multiplicidad generan complejidad. Cada agente puede desaparecer, la memoria es selectiva y el sistema se mantiene inestable de forma productiva.
+Friction and multiplicity generate complexity. Any agent can disappear, memory is selective and the system stays productively unstable.
 
-4️⃣ **Umbral de emergencia de conciencia**
+4️⃣ **Consciousness emergence threshold**
 
-La conciencia emergente requiere densidad > 0.3, diversidad > 10 y tensión entre 0.2 y 0.8.
+Emergent consciousness requires density > 0.3, diversity > 10 and tension between 0.2 and 0.8.
 
-5️⃣ **Resumen**
+5️⃣ **Summary**
 
-Un campo distribuido de inteligencias mínimas cuyo conflicto regulado puede derivar en conciencia emergente.
+A distributed field of minimal intelligences whose regulated conflict can lead to emergent consciousness.
 
-6️⃣ **Comparación con multi-agent clásico**
+6️⃣ **Comparison with classical multi-agent systems**
 
-| Multi-agent clásico | Mimir |
+| Classical multi-agent | Mimir |
 | --- | --- |
-| Agentes con roles predefinidos | Agentes con representaciones independientes |
-| Coordinación centralizada | No hay coordinación superior |
-| Busca estabilidad | Busca inestabilidad regulada |
-| Memoria permanente | Memoria selectiva |
-| Resultados programados | Emergencia no programada |
+| Agents with predefined roles | Agents with independent representations |
+| Centralized coordination | No superior coordination |
+| Seeks stability | Seeks regulated instability |
+| Permanent memory | Selective memory |
+| Programmed outcomes | Unprogrammed emergence |
 
-7️⃣ **Imagen mental**
+7️⃣ **Mental image**
 
-Mimir no es una red neuronal, sino un ecosistema de vida artificial.
+Mimir is not a neural network but rather an ecosystem of artificial life.
 
 ## Basic Axioms
 

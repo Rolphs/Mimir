@@ -11,6 +11,7 @@ code and comments are in Spanish.
 - [Running](#running)
   - [Dashboard](#dashboard)
   - [Extracting agent code](#extracting-agent-code)
+  - [Plugins](#plugins)
   - [Inspecting datasets](#inspecting-datasets)
   - [Dataset API](#dataset-api)
 - [Testing](#testing)
@@ -27,6 +28,7 @@ code and comments are in Spanish.
 ecosistema_ia/
 ├── api/              # FastAPI server exposing the SPS REST API
 ├── agentes/          # agent implementations
+├── plugins/          # optional agent plugins loaded at runtime
 ├── datasets/         # CSV data used by the territory
 ├── datos/            # output logs generated during execution
 ├── entorno/          # territory management utilities
@@ -35,8 +37,8 @@ ecosistema_ia/
 ```
 
 The main entry point is `ecosistema_ia/main.py`. It loads agents dynamically from the
-`agentes/tipos` directory, instantiates observers such as the `Metatron` and `Mensajero` classes and
-runs a series of evolutionary cycles.
+`agentes/tipos` directory and from any modules placed in `plugins`, instantiates observers
+such as the `Metatron` and `Mensajero` classes and runs a series of evolutionary cycles.
 
 ## Requirements
 
@@ -97,6 +99,15 @@ single text file (`agentes/agentes.txt`) for inspection:
 ```
 python ecosistema_ia/texto_agentes.py
 ```
+
+### Plugins
+
+Additional agents can be dropped inside the `ecosistema_ia/plugins` folder. The
+dynamic loader will import every `.py` module found there on startup. Each module
+should define at least one class that inherits from `AgenteBase` and implements
+an `actuar` method accepting the usual `(territorio, otros_agentes=None)`
+signature. Classes must be instantiable with only the automatically generated
+identifier and three coordinate values.
 
 ### Inspecting datasets
 

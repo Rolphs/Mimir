@@ -11,3 +11,6 @@ ecosistema_ia/datasets/*.csv
 
 # Documentation source
 Mimir White Paper.rtf
+
+ecosistema_ia/plugins/*
+!ecosistema_ia/plugins/__init__.py

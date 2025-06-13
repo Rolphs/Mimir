@@ -16,6 +16,7 @@ code and comments are in Spanish.
 - [Testing](#testing)
 - [White Paper Highlights](#white-paper-highlights)
 - [Symbolic Profile Styles API](#symbolic-profile-styles-api)
+- [Mimir como Arquitectura Agentic](#mimir-como-arquitectura-agentic)
 - [Basic Axioms](#basic-axioms)
 - [Notes](#notes)
 - [License](#license)
@@ -196,7 +197,46 @@ uvicorn ecosistema_ia.api.servidor:app --reload
 Send a POST request to `/sps/styles` with a JSON body containing `cromotipo`, `ritmo_cognitivo`,
 `arquetipo_narrativo` and `estilo_perceptual`.
 
+
 The API responds with a dictionary of design variables that front-end frameworks can consume.
+
+## Mimir como Arquitectura Agentic
+
+1️⃣ **Naturaleza central**
+
+Mimir es un sistema evolutivo y simbiótico donde las unidades básicas son inteligencias mínimas autónomas. No existe un control central y la conciencia, si surge, emerge del campo colectivo.
+
+2️⃣ **Estructura del sistema**
+
+* **Agente (Inteligencia mínima)**: procesa entrada, mantiene estado interno, genera salida variable y posee riesgo constante de extinción.
+* **Campo (Field)**: espacio donde ocurren las interacciones, con conexiones activas y fricciones.
+* **Meta-Regulador**: supervisa densidad, diversidad y tensión, introduciendo perturbaciones para evitar el equilibrio estable.
+
+3️⃣ **Dinámica de operación**
+
+Fricción y multiplicidad generan complejidad. Cada agente puede desaparecer, la memoria es selectiva y el sistema se mantiene inestable de forma productiva.
+
+4️⃣ **Umbral de emergencia de conciencia**
+
+La conciencia emergente requiere densidad > 0.3, diversidad > 10 y tensión entre 0.2 y 0.8.
+
+5️⃣ **Resumen**
+
+Un campo distribuido de inteligencias mínimas cuyo conflicto regulado puede derivar en conciencia emergente.
+
+6️⃣ **Comparación con multi-agent clásico**
+
+| Multi-agent clásico | Mimir |
+| --- | --- |
+| Agentes con roles predefinidos | Agentes con representaciones independientes |
+| Coordinación centralizada | No hay coordinación superior |
+| Busca estabilidad | Busca inestabilidad regulada |
+| Memoria permanente | Memoria selectiva |
+| Resultados programados | Emergencia no programada |
+
+7️⃣ **Imagen mental**
+
+Mimir no es una red neuronal, sino un ecosistema de vida artificial.
 
 ## Basic Axioms
 

@@ -26,3 +26,5 @@ def test_preview_has_expected_rows():
     preview = data["preview"]
     assert isinstance(preview, list)
     assert len(preview) == n + 1
+    assert "summary" in data
+    assert isinstance(data["summary"], dict)

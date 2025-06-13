@@ -1,8 +1,9 @@
 """Utilidades simples para inspeccionar datasets CSV."""
 
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import csv
+import pandas as pd
 
 from ..config import DATASETS_DIR
 
@@ -58,4 +59,21 @@ def previsualizar_csv(nombre: str, n: int = 5, ruta: Path = DATASETS_DIR) -> Lis
     return filas
 
 
-__all__ = ["listar_csvs", "previsualizar_csv"]
+def previsualizar_csv_con_resumen(
+    nombre: str, n: int = 5, ruta: Path = DATASETS_DIR
+) -> Tuple[List[List[str]], Dict[str, float]]:
+    """Devuelve ``n`` filas del CSV junto con medias de columnas numéricas."""
+    filas = previsualizar_csv(nombre, n=n, ruta=ruta)
+    csv_path = Path(ruta) / nombre
+    resumen: Dict[str, float] = {}
+    if csv_path.exists():
+        try:
+            df = pd.read_csv(csv_path)
+            num_df = df.select_dtypes(include="number")
+            resumen = {col: num_df[col].mean() for col in num_df.columns}
+        except Exception as e:  # pragma: no cover - solo para depuración manual
+            print(f"⚠️ Error al calcular estadísticas de {csv_path}: {e}")
+    return filas, resumen
+
+
+__all__ = ["listar_csvs", "previsualizar_csv", "previsualizar_csv_con_resumen"]

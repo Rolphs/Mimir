@@ -115,13 +115,18 @@ Small helpers under `ecosistema_ia.entorno.exploracion` make it easy to look at 
 with the project.
 
 ```python
-from ecosistema_ia.entorno.exploracion import listar_csvs, previsualizar_csv
+from ecosistema_ia.entorno.exploracion import (
+    listar_csvs,
+    previsualizar_csv_con_resumen,
+)
 
 for info in listar_csvs():
     print(f"{info['archivo']} -> {info['filas']} filas, {info['columnas']} columnas")
 
-for row in previsualizar_csv("Episodes FAST.csv", n=3):
+rows, summary = previsualizar_csv_con_resumen("Episodes FAST.csv", n=3)
+for row in rows:
     print(row)
+print("Resumen:", summary)
 ```
 
 These utilities report the dimensions of each dataset and return a small sample of rows for quick
@@ -137,7 +142,7 @@ uvicorn ecosistema_ia.api.servidor:app --reload --port 8000
 
 * `GET /datasets` lists available CSV files.
 * `GET /datasets/preview?name=<file>&n=<rows>` shows the first ``n`` rows of a CSV
-  (``n`` defaults to ``5``).
+  and returns simple statistics for numeric columns (``n`` defaults to ``5``).
 
 #### Example usage
 
@@ -163,7 +168,11 @@ Expected responses are JSON documents like:
     ["Client", "Country", "Date Month", "Uniques", "Time Watched Minutes", "Avg Min per Unique", "Sessions"],
     ["Canela", "Albania", "Apr-2024", "18", "19.100000000000005", "1.0611111111111111", "35"],
     ["Canela", "Algeria", "Apr-2024", "405", "267.0833333333338", "0.6594650205761317", "588"]
-  ]
+  ],
+  "summary": {
+    "Uniques": 102.3,
+    "Sessions": 345.8
+  }
 }
 ```
 

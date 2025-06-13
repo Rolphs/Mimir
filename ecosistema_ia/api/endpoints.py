@@ -3,7 +3,11 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from ecosistema_ia.sps import SymbolicProfile, generate_styles
-from ecosistema_ia.entorno.exploracion import listar_csvs, previsualizar_csv
+from ecosistema_ia.entorno.exploracion import (
+    listar_csvs,
+    previsualizar_csv,
+    previsualizar_csv_con_resumen,
+)
 
 router = APIRouter()
 
@@ -31,6 +35,6 @@ def get_datasets():
 
 @router.get("/datasets/preview")
 def preview_dataset(name: str, n: int = 5):
-    """Return the first ``n`` rows of the selected CSV file."""
-    rows = previsualizar_csv(name, n=n)
-    return {"preview": rows}
+    """Return the first ``n`` rows and basic stats of the selected CSV file."""
+    rows, summary = previsualizar_csv_con_resumen(name, n=n)
+    return {"preview": rows, "summary": summary}

@@ -184,3 +184,8 @@ class Territorio:
                 print(f"🌀 Dato dispersado en ({x},{y},{z}): {dato}")
             except Exception as e:
                 print(f"⚠️ Error al dispersar dato en ({x},{y},{z}): {e}")
+
+    def desmontar_patron(self, tipo: str, valor):
+        """Rompe un patrón persistente limpiando mensajes relacionados."""
+        print(f"♻️ Desmontando patrón {tipo} '{valor}'")
+        self.buzon_mensajes = []

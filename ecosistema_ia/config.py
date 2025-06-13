@@ -22,3 +22,6 @@ CSV_METATRON_SEMANTICS_PATH = DATA_DIR / "metatron_semantics.csv"
 
 # Bandera para controlar visualización en consola
 MOSTRAR_INFO_CONSOLA = True
+
+# Probabilidad de extinción por ciclo (Axioma II)
+PROB_EXTINCION = 0.05

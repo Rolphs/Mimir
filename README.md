@@ -267,8 +267,7 @@ own.
 **Definition**: Existential risk is the constant, non-zero probability that a minimal intelligence
 stops operating due to internal or environmental factors.
 
-**Principle**: Every minimal intelligence in the system must keep an extinction probability greater
-than zero each cycle. Survival depends only on individual adaptive capacity.
+**Principle**: Every minimal intelligence in the system must keep an extinction probability greater than zero each cycle. Survival depends only on individual adaptive capacity. This probability is configured by `PROB_EXTINCION` in `ecosistema_ia/config.py`.
 
 ---
 

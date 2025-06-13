@@ -6,7 +6,7 @@ from collections import deque
 class AgenteBase:
     """Base behaviour shared by herbivores, carnivores and sublime agents."""
 
-    def __init__(self, identificador, x, y, z, funcion="agente"):
+    def __init__(self, identificador, x, y, z, funcion="agente", memoria_max=100, memoria_vida=None):
         self.identificador = identificador
         self.x = x
         self.y = y
@@ -15,6 +15,8 @@ class AgenteBase:
 
         self.edad = 0
         self.memoria = []
+        self.memoria_max = memoria_max
+        self.memoria_vida = memoria_vida
         self.recompensa_total = 0
         self.alianzas = set()
 
@@ -37,6 +39,7 @@ class AgenteBase:
 
     def incrementar_edad(self):
         self.edad += 1
+        self.prune_memoria()
 
     def puede_reproducirse(self):
         return False
@@ -54,6 +57,14 @@ class AgenteBase:
             "resultado": resultado,
             "exitoso": exitoso
         })
+        self.prune_memoria()
+
+    def prune_memoria(self):
+        """Remove stale entries from memory based on age and size limits."""
+        if self.memoria_vida is not None:
+            self.memoria = [m for m in self.memoria if self.edad - m.get("edad", self.edad) < self.memoria_vida]
+        if len(self.memoria) > self.memoria_max:
+            self.memoria = self.memoria[-self.memoria_max:]
 
     def enviar_mensaje(self, mensaje, receptor):
         """Deliver a direct message to another agent."""

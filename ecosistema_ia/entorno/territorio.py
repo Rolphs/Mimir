@@ -3,6 +3,7 @@ import random
 from pathlib import Path
 from typing import List, Dict
 from datetime import datetime
+from itertools import combinations
 from sklearn.linear_model import LinearRegression
 from ..config import DATA_DIR, DATASETS_DIR, PROB_EXTINCION
 
@@ -21,7 +22,9 @@ class Territorio:
         # rutas de cada CSV para permitir que la carpeta contenga miles o
         # incluso millones de archivos sin agotar recursos.
         self.csvs = self.cargar_datasets()
-        self.buzon_mensajes = []  # 📬 Espacio compartido para comunicación entre agentes
+        self.buzon_mensajes = (
+            []
+        )  # 📬 Espacio compartido para comunicación entre agentes
         self.historial_estados = []
         self.modelo = None
         print("🧭 Territorio inicializado")
@@ -53,7 +56,7 @@ class Territorio:
         if 0 <= z < len(self.csvs):
             ruta = self.csvs[z]
             try:
-                with ruta.open(newline='', encoding='utf-8') as f:
+                with ruta.open(newline="", encoding="utf-8") as f:
                     return [fila for fila in csv.reader(f)]
             except Exception as e:
                 print(f"⚠️ Error al leer {ruta}: {e}")
@@ -73,6 +76,27 @@ class Territorio:
         for key, ids in sorted(mapa.items()):
             print(f"  📍 {key} → {ids}")
 
+    def calcular_metricas(self, agentes) -> Dict[str, float]:
+        """Compute density, diversity and tension for the current cycle."""
+        n = len(agentes)
+        if n < 2:
+            densidad = 0.0
+        else:
+            conexiones = sum(
+                1
+                for a, b in combinations(agentes, 2)
+                if abs(a.x - b.x) <= 2 and abs(a.y - b.y) <= 2 and a.z == b.z
+            )
+            densidad = conexiones / (n * (n - 1) / 2)
+
+        diversidad = len({getattr(a, "funcion", type(a).__name__) for a in agentes})
+
+        total_msgs = len(self.buzon_mensajes)
+        conflictos = sum(1 for m in self.buzon_mensajes if m.get("tipo") == "conflicto")
+        tension = conflictos / total_msgs if total_msgs else 0.0
+
+        return {"densidad": densidad, "diversidad": diversidad, "tension": tension}
+
     def eliminar_agentes_ineficientes(self, agentes, umbral=1, ciclo=0) -> List:
         vivos = [a for a in agentes if a.recompensa_total >= umbral]
         muertos = [a for a in agentes if a.recompensa_total < umbral]
@@ -84,35 +108,75 @@ class Territorio:
     def registrar_eliminaciones_csv(self, eliminados, ciclo: int):
         self.ruta_eliminaciones.parent.mkdir(parents=True, exist_ok=True)
         nuevo = not self.ruta_eliminaciones.exists()
-        with self.ruta_eliminaciones.open("a", newline='', encoding='utf-8') as f:
+        with self.ruta_eliminaciones.open("a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             if nuevo:
-                writer.writerow(["ciclo", "timestamp", "id", "recompensa_total", "edad", "posicion", "alianzas"])
+                writer.writerow(
+                    [
+                        "ciclo",
+                        "timestamp",
+                        "id",
+                        "recompensa_total",
+                        "edad",
+                        "posicion",
+                        "alianzas",
+                    ]
+                )
             for a in eliminados:
-                writer.writerow([
-                    ciclo,
-                    datetime.utcnow().isoformat(),
-                    a.identificador,
-                    a.recompensa_total,
-                    a.edad,
-                    f"({a.x},{a.y},{a.z})",
-                    "|".join(sorted(a.alianzas))
-                ])
+                writer.writerow(
+                    [
+                        ciclo,
+                        datetime.utcnow().isoformat(),
+                        a.identificador,
+                        a.recompensa_total,
+                        a.edad,
+                        f"({a.x},{a.y},{a.z})",
+                        "|".join(sorted(a.alianzas)),
+                    ]
+                )
 
-    def registrar_estado_csv(self, ciclo: int, total_agentes: int):
+    def registrar_estado_csv(
+        self,
+        ciclo: int,
+        total_agentes: int,
+        densidad: float,
+        diversidad: int,
+        tension: float,
+    ):
         estado = {
             "ciclo": ciclo,
             "timestamp": datetime.utcnow().isoformat(),
-            "agentes": total_agentes
+            "agentes": total_agentes,
+            "densidad": densidad,
+            "diversidad": diversidad,
+            "tension": tension,
         }
         self.historial_estados.append(estado)
         self.ruta_csv_intocable.parent.mkdir(parents=True, exist_ok=True)
         nuevo = not self.ruta_csv_intocable.exists()
-        with self.ruta_csv_intocable.open("a", newline='', encoding='utf-8') as f:
+        with self.ruta_csv_intocable.open("a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             if nuevo:
-                writer.writerow(["ciclo", "timestamp", "agentes"])
-            writer.writerow([estado["ciclo"], estado["timestamp"], estado["agentes"]])
+                writer.writerow(
+                    [
+                        "ciclo",
+                        "timestamp",
+                        "agentes",
+                        "densidad",
+                        "diversidad",
+                        "tension",
+                    ]
+                )
+            writer.writerow(
+                [
+                    estado["ciclo"],
+                    estado["timestamp"],
+                    estado["agentes"],
+                    f"{densidad:.3f}",
+                    diversidad,
+                    f"{tension:.3f}",
+                ]
+            )
 
     def entrenar_modelo_territorio(self):
         if len(self.historial_estados) < 5:
@@ -135,12 +199,29 @@ class Territorio:
             "ciclo": ultimo["ciclo"],
             "timestamp": ultimo["timestamp"],
             "agentes": ultimo["agentes"],
-            "prediccion_siguiente": self.get_prediccion_poblacion(ultimo["ciclo"] + 1)
+            "densidad": ultimo.get("densidad", 0.0),
+            "diversidad": ultimo.get("diversidad", 0),
+            "tension": ultimo.get("tension", 0.0),
+            "prediccion_siguiente": self.get_prediccion_poblacion(ultimo["ciclo"] + 1),
         }
 
     def regular(self, agentes, ciclo=0):
         print(f"📊 Regulando ecosistema | Ciclo {ciclo} | Agentes: {len(agentes)}")
-        self.registrar_estado_csv(ciclo, len(agentes))
+        metricas = self.calcular_metricas(agentes)
+
+        densidad = metricas["densidad"]
+        diversidad = metricas["diversidad"]
+        tension = metricas["tension"]
+
+        # Comparar con limites de agentes.md
+        if densidad <= 0.3:
+            print(f"⚠️ Densidad fuera de rango: {densidad:.2f}")
+        if diversidad <= 10:
+            print(f"⚠️ Diversidad baja: {diversidad}")
+        if tension < 0.2 or tension > 0.8:
+            print(f"⚠️ Tensión fuera de rango: {tension:.2f}")
+
+        self.registrar_estado_csv(ciclo, len(agentes), densidad, diversidad, tension)
         self.entrenar_modelo_territorio()
 
         # Riesgo de extinción (Axioma II)
@@ -168,7 +249,7 @@ class Territorio:
         if 0 <= z < len(self.csvs):
             ruta = self.csvs[z]
             try:
-                with ruta.open(newline='', encoding='utf-8') as f:
+                with ruta.open(newline="", encoding="utf-8") as f:
                     datos_csv = [fila for fila in csv.reader(f)]
                 while len(datos_csv) <= x:
                     datos_csv.append([])
@@ -179,7 +260,7 @@ class Territorio:
                     datos_csv[x][y] = str(dato)
                 else:
                     datos_csv[x][y] += f" | {str(dato)}"
-                with ruta.open('w', newline='', encoding='utf-8') as f:
+                with ruta.open("w", newline="", encoding="utf-8") as f:
                     csv.writer(f).writerows(datos_csv)
                 print(f"🌀 Dato dispersado en ({x},{y},{z}): {dato}")
             except Exception as e:

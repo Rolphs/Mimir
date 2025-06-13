@@ -4,6 +4,8 @@
 
 from pathlib import Path
 
+from .axioms import AXIOMS
+
 # Parámetros generales del ecosistema
 TAMANO_TERRITORIO_X = 10
 TAMANO_TERRITORIO_Y = 10
@@ -23,5 +25,5 @@ CSV_METATRON_SEMANTICS_PATH = DATA_DIR / "metatron_semantics.csv"
 # Bandera para controlar visualización en consola
 MOSTRAR_INFO_CONSOLA = True
 
-# Probabilidad de extinción por ciclo (Axioma II)
+# Probabilidad de extinción por ciclo (ver AXIOMS["Axiom II"]) 
 PROB_EXTINCION = 0.05

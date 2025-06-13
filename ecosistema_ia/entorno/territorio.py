@@ -6,6 +6,7 @@ from datetime import datetime
 from itertools import combinations
 from sklearn.linear_model import LinearRegression
 from ..config import DATA_DIR, DATASETS_DIR, PROB_EXTINCION
+from ..axioms import AXIOMS
 
 
 class Territorio:
@@ -224,7 +225,7 @@ class Territorio:
         self.registrar_estado_csv(ciclo, len(agentes), densidad, diversidad, tension)
         self.entrenar_modelo_territorio()
 
-        # Riesgo de extinción (Axioma II)
+        # Riesgo de extinción (AXIOMS["Axiom II"])
         sobrevivientes = []
         extintos = []
         for a in agentes:

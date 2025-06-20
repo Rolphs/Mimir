@@ -41,30 +41,30 @@ def cargar_agentes_dinamicamente() -> list:
                 nombre_modulo = archivo.stem
                 ruta_import = f"ecosistema_ia.agentes.tipos.{tipo_path.name}.{nombre_modulo}"
 
-            try:
-                modulo = importlib.import_module(ruta_import)
+                try:
+                    modulo = importlib.import_module(ruta_import)
 
-                for nombre_clase, clase in inspect.getmembers(modulo, inspect.isclass):
-                    if clase.__module__ != ruta_import:
-                        continue
-                    if not issubclass(clase, AgenteBase):
-                        continue
-                    if nombre_clase in clases_base:
-                        print(f"⚠️ Clase base {nombre_clase} ignorada")
-                        continue
-                    tiene_actuar = "actuar" in clase.__dict__ or clase.actuar is not AgenteBase.actuar
-                    if tiene_actuar and callable(getattr(clase, "actuar", None)):
-                        identificador = f"{nombre_clase[:2].upper()}-{contador:03d}"
-                        try:
-                            instancia = clase(identificador, 0, 0, 0)
-                        except TypeError:
-                            print(f"⚠️ {nombre_clase} requiere argumentos adicionales y será ignorada")
+                    for nombre_clase, clase in inspect.getmembers(modulo, inspect.isclass):
+                        if clase.__module__ != ruta_import:
                             continue
-                        agentes.append(instancia)
-                        print(f"✅ Cargado dinámicamente: {identificador}")
-                        contador += 1
-            except Exception as e:
-                print(f"❌ Error al cargar {ruta_import}: {e}")
+                        if not issubclass(clase, AgenteBase):
+                            continue
+                        if nombre_clase in clases_base:
+                            print(f"⚠️ Clase base {nombre_clase} ignorada")
+                            continue
+                        tiene_actuar = "actuar" in clase.__dict__ or clase.actuar is not AgenteBase.actuar
+                        if tiene_actuar and callable(getattr(clase, "actuar", None)):
+                            identificador = f"{nombre_clase[:2].upper()}-{contador:03d}"
+                            try:
+                                instancia = clase(identificador, 0, 0, 0)
+                            except TypeError:
+                                print(f"⚠️ {nombre_clase} requiere argumentos adicionales y será ignorada")
+                                continue
+                            agentes.append(instancia)
+                            print(f"✅ Cargado dinámicamente: {identificador}")
+                            contador += 1
+                except Exception as e:
+                    print(f"❌ Error al cargar {ruta_import}: {e}")
 
     # Buscar agentes adicionales bajo ecosistema_ia/plugins
     if plugins_path.exists():

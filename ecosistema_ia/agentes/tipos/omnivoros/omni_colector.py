@@ -30,5 +30,20 @@ class OmniColector(OmnivoroBase):
         vecinos = self.buscar_vecinos(otros_agentes or [])
         self.absorber_memorias(vecinos)
 
+    def mutar(self):
+        """Marca la última entrada de memoria como mutada."""
+        if self.memoria:
+            self.memoria[-1]["resultado"] = "mutado"
+
+    def puede_reproducirse(self):
+        return len(self.memoria) >= 1
+
+    def reproducirse(self, nuevo_id):
+        nuevo = OmniColector(nuevo_id, self.x, self.y, self.z)
+        nuevo.memoria = list(self.memoria[-1:])
+        nuevo.mutar()
+        print(f"🧬 {self.identificador} creó {nuevo.identificador}")
+        return nuevo
+
 
 __all__ = ["OmniColector"]

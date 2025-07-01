@@ -113,4 +113,20 @@ class DivisorReproductor(CarnivoroBase):
         self.ciclos_sin_reproducir = 0
         return [nuevo]
 
+    def mutar(self):
+        """Pequeña mutación al coeficiente del modelo."""
+        if hasattr(self.modelo_ml, "C"):
+            self.modelo_ml.C *= random.uniform(0.8, 1.2)
+
+    def puede_reproducirse(self):
+        return self.ciclos_sin_reproducir >= 3
+
+    def reproducirse(self, nuevo_id):
+        nuevo = DivisorReproductor(nuevo_id, self.x, self.y, self.z)
+        nuevo.memoria_acciones = list(self.memoria_acciones[-3:])
+        nuevo.mutar()
+        self.ciclos_sin_reproducir = 0
+        print(f"🧬 {self.identificador} se dividió en {nuevo.identificador}")
+        return nuevo
+
 __all__ = ["DivisorReproductor"]

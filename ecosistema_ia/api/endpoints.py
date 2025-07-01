@@ -12,9 +12,11 @@ from ecosistema_ia.entorno.exploracion import (
     previsualizar_csv,
     previsualizar_csv_con_resumen,
 )
+from ecosistema_ia.entorno.territorio import Territorio
 
 router = APIRouter()
 engine = ProfileEngine()
+territorio = Territorio()
 
 
 class ProfileToken(BaseModel):
@@ -50,3 +52,9 @@ def preview_dataset(name: str, n: int = 5):
     """Return the first ``n`` rows and basic stats of the selected CSV file."""
     rows, summary = previsualizar_csv_con_resumen(name, n=n)
     return {"preview": rows, "summary": summary}
+
+
+@router.get("/metrics/latest")
+def latest_metrics():
+    """Return the most recent Territorio metrics."""
+    return territorio.get_estado_json()

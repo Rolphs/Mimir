@@ -2,7 +2,11 @@
 
 from fastapi import APIRouter
 from pydantic import BaseModel
-from ecosistema_ia.sps import SymbolicProfile, generate_styles
+from ecosistema_ia.sps import (
+    SymbolicProfile,
+    generate_styles,
+    ProfileEngine,
+)
 from ecosistema_ia.entorno.exploracion import (
     listar_csvs,
     previsualizar_csv,
@@ -10,6 +14,7 @@ from ecosistema_ia.entorno.exploracion import (
 )
 
 router = APIRouter()
+engine = ProfileEngine()
 
 
 class ProfileToken(BaseModel):
@@ -25,6 +30,13 @@ def get_styles(token: ProfileToken):
     profile = SymbolicProfile(**token.dict())
     styles = generate_styles(profile.to_token())
     return {"styles": styles}
+
+
+@router.post("/sps/code")
+def get_code(token: ProfileToken):
+    """Return CSS and React snippets for a symbolic profile."""
+    result = engine.generate_code(token.dict())
+    return result
 
 
 @router.get("/datasets")

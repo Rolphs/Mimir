@@ -29,7 +29,8 @@ class Territorio:
             []
         )  # 📬 Espacio compartido para comunicación entre agentes
         self.historial_estados = []
-        self.modelo = None
+        self.modelo_poblacion = None
+        self.modelos_metricas: Dict[str, LinearRegression] = {}
         print("🧭 Territorio inicializado")
 
     def cargar_datasets(self) -> List[Path]:
@@ -39,18 +40,9 @@ class Territorio:
             print(f"⚠️ Ruta no encontrada: {self.ruta_base}")
             return archivos
 
-        archivos_csv = []
-        for archivo in self.ruta_base.iterdir():
-            if archivo.suffix == ".csv":
-                try:
-                    timestamp = archivo.stat().st_ctime
-                except OSError:
-                    timestamp = 0
-                archivos_csv.append((timestamp, archivo))
-
-        archivos_csv.sort(key=lambda x: (x[0], x[1].name))
-        for _, archivo in archivos_csv:
-            archivos.append(archivo)
+        for archivo in sorted(self.ruta_base.glob("*.csv")):
+            archivos.append(archivo.resolve())
+        print(f"📂 {len(archivos)} datasets cargados")
 
         return archivos
 
@@ -194,18 +186,27 @@ class Territorio:
             print("📉 No hay suficientes datos para entrenar el modelo de regulación.")
             return
         X = [[e["ciclo"]] for e in self.historial_estados]
-        y = [e["agentes"] for e in self.historial_estados]
-        self.modelo = LinearRegression().fit(X, y)
+        self.modelo_poblacion = LinearRegression().fit(X, [e["agentes"] for e in self.historial_estados])
+        self.modelos_metricas["densidad"] = LinearRegression().fit(X, [e["densidad"] for e in self.historial_estados])
+        self.modelos_metricas["diversidad"] = LinearRegression().fit(X, [e["diversidad"] for e in self.historial_estados])
+        self.modelos_metricas["tension"] = LinearRegression().fit(X, [e["tension"] for e in self.historial_estados])
 
     def get_prediccion_poblacion(self, ciclo: int) -> int:
-        if self.modelo:
-            return int(self.modelo.predict([[ciclo]])[0])
+        if self.modelo_poblacion:
+            return int(self.modelo_poblacion.predict([[ciclo]])[0])
         return -1
+
+    def get_prediccion_metrica(self, nombre: str, ciclo: int) -> float:
+        modelo = self.modelos_metricas.get(nombre)
+        if modelo:
+            return float(modelo.predict([[ciclo]])[0])
+        return -1.0
 
     def get_estado_json(self) -> Dict:
         if not self.historial_estados:
             return {}
         ultimo = self.historial_estados[-1]
+        ciclo_sig = ultimo["ciclo"] + 1
         return {
             "ciclo": ultimo["ciclo"],
             "timestamp": ultimo["timestamp"],
@@ -213,7 +214,10 @@ class Territorio:
             "densidad": ultimo.get("densidad", 0.0),
             "diversidad": ultimo.get("diversidad", 0),
             "tension": ultimo.get("tension", 0.0),
-            "prediccion_siguiente": self.get_prediccion_poblacion(ultimo["ciclo"] + 1),
+            "prediccion_siguiente": self.get_prediccion_poblacion(ciclo_sig),
+            "pred_densidad": self.get_prediccion_metrica("densidad", ciclo_sig),
+            "pred_diversidad": self.get_prediccion_metrica("diversidad", ciclo_sig),
+            "pred_tension": self.get_prediccion_metrica("tension", ciclo_sig),
         }
 
     def regular(self, agentes, ciclo=0):
@@ -235,6 +239,29 @@ class Territorio:
         self.registrar_estado_csv(ciclo, len(agentes), densidad, diversidad, tension)
         self.entrenar_modelo_territorio()
 
+        pred_pob = self.get_prediccion_poblacion(ciclo + 1)
+        pred_den = self.get_prediccion_metrica("densidad", ciclo + 1)
+        pred_div = self.get_prediccion_metrica("diversidad", ciclo + 1)
+        pred_ten = self.get_prediccion_metrica("tension", ciclo + 1)
+        print(
+            f"🔮 Próximo ciclo {ciclo + 1} → población {pred_pob}, densidad {pred_den:.2f}, "
+            f"diversidad {pred_div:.2f}, tensión {pred_ten:.2f}"
+        )
+        if self.historial_estados:
+            self.historial_estados[-1].update(
+                {
+                    "pred_poblacion": pred_pob,
+                    "pred_densidad": pred_den,
+                    "pred_diversidad": pred_div,
+                    "pred_tension": pred_ten,
+                }
+            )
+
+        umbral_limpiar = 1
+        if 0 <= pred_den < 0.3 or (pred_pob != -1 and len(agentes) > pred_pob * 1.2):
+            print("⚠️ Ajuste por predicción de sobrepoblación o baja densidad")
+            umbral_limpiar = 5
+
         # Riesgo de extinción (AXIOMS["Axiom II"])
         sobrevivientes = []
         extintos = []
@@ -247,12 +274,7 @@ class Territorio:
             print(f"💥 {len(extintos)} agentes desaparecieron por azar.")
             self.registrar_eliminaciones_csv(extintos, ciclo)
         agentes = sobrevivientes
-        pred = self.get_prediccion_poblacion(ciclo + 1)
-        if pred != -1 and len(agentes) > pred * 1.2:
-            print(f"⚠️ Sobrepoblación detectada. Limpiando con umbral más alto.")
-            agentes = self.eliminar_agentes_ineficientes(agentes, umbral=5, ciclo=ciclo)
-        else:
-            agentes = self.eliminar_agentes_ineficientes(agentes, umbral=1, ciclo=ciclo)
+        agentes = self.eliminar_agentes_ineficientes(agentes, umbral=umbral_limpiar, ciclo=ciclo)
         self.renderizar_agentes_ascii(agentes)
         return agentes
 

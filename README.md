@@ -296,9 +296,9 @@ Requires `scikit-learn` and all dependencies listed in `requirements.txt`.
 
 - 📖 [Complete White Paper](docs/white_paper.md) - Full theoretical framework
 - 🔧 [Developer Codex](docs/developer_codex.md) - Implementation principles  
-- 🎨 [SPS Profile System](docs/sps_profiles.md) - Adaptive interface mechanics
+- 🎨 [SPS Profile System](docs/sps_profile_system.md) - Adaptive interface mechanics
 - 📊 [Consciousness Metrics](docs/consciousness_metrics.md) - Emergence measurement
-- 🧪 [Agent Development Guide](docs/agent_development.md) - Create new agent types
+- 🧪 [Agent Development Guide](docs/agent_development_guide.md) - Create new agent types
 
 ---
 

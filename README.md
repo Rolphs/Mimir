@@ -299,6 +299,7 @@ Requires `scikit-learn` and all dependencies listed in `requirements.txt`.
 - 🎨 [SPS Profile System](docs/sps_profile_system.md) - Adaptive interface mechanics
 - 📊 [Consciousness Metrics](docs/consciousness_metrics.md) - Emergence measurement
 - 🧪 [Agent Development Guide](docs/agent_development_guide.md) - Create new agent types
+- 🗺️ [Roadmap](docs/roadmap.md) - Fase 1–3 checklist
 
 ---
 

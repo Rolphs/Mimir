@@ -32,4 +32,23 @@ class Herbivoro(HerbivoroBase):
             exitoso=recompensa > 0,
         )
 
+    def mutar(self):
+        """Pequeña mutación sobre la última entrada de memoria."""
+        if self.memoria:
+            self.memoria[-1]["mutado"] = True
+
+    def puede_reproducirse(self):
+        return self.recompensa_total >= 20
+
+    def reproducirse(self, nuevo_id):
+        nuevo_x = self.x + random.choice([-1, 0, 1])
+        nuevo_y = self.y + random.choice([-1, 0, 1])
+        nuevo = Herbivoro(nuevo_id, nuevo_x, nuevo_y, self.z)
+        nuevo.memoria = list(self.memoria[-2:])
+        nuevo.recompensa_total = self.recompensa_total // 2
+        nuevo.funcion = self.funcion + "_m"
+        nuevo.mutar()
+        print(f"🧬 {self.identificador} generó {nuevo.identificador}")
+        return nuevo
+
 __all__ = ["Herbivoro"]

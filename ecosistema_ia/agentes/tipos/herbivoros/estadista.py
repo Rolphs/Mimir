@@ -65,5 +65,23 @@ class Estadista(HerbivoroBase):
         self.broadcast_mensaje(territorio, stats, tipo="estadisticas")
         print(f"\U0001F4C8 {self.identificador} calculó {stats} en {self.posicion}")
 
+    def mutar(self):
+        """Aumenta ligeramente los valores estadísticos en memoria."""
+        if self.memoria:
+            ultimo = self.memoria[-1]
+            res = ultimo.get("resultado", {})
+            if isinstance(res, dict):
+                ultimo["resultado"] = {k: v * 1.1 if isinstance(v, (int, float)) else v for k, v in res.items()}
+
+    def puede_reproducirse(self):
+        return self.edad % 4 == 0
+
+    def reproducirse(self, nuevo_id):
+        nuevo = Estadista(nuevo_id, self.x, self.y, self.z)
+        nuevo.memoria = list(self.memoria[-2:])
+        nuevo.mutar()
+        print(f"🧬 {self.identificador} generó {nuevo.identificador}")
+        return nuevo
+
 
 __all__ = ["Estadista"]

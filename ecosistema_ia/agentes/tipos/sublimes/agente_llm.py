@@ -28,5 +28,19 @@ class AgenteLLM(SublimeBase):
         self.broadcast_mensaje(territorio, respuesta, tipo="llm")
         print(f"🤖 {self.identificador} generó texto: {respuesta}")
 
+    def mutar(self):
+        """Cambia la función indicando que es un clon."""
+        self.funcion = "llm_mutado"
+
+    def puede_reproducirse(self):
+        return self.edad % 2 == 0
+
+    def reproducirse(self, nuevo_id):
+        nuevo = AgenteLLM(nuevo_id, self.x, self.y, self.z)
+        nuevo.memoria = list(self.memoria[-2:])
+        nuevo.mutar()
+        print(f"🧬 {self.identificador} clonó a {nuevo.identificador}")
+        return nuevo
+
 
 __all__ = ["AgenteLLM"]

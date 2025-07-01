@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import List, Dict
 from datetime import datetime
 from itertools import combinations
+
+from ..metrics.iit_phi import calculate_phi_for_agent_cluster
 from sklearn.linear_model import LinearRegression
 from ..config import DATA_DIR, DATASETS_DIR, PROB_EXTINCION
 from ..axioms import AXIOMS
@@ -96,7 +98,15 @@ class Territorio:
         conflictos = sum(1 for m in self.buzon_mensajes if m.get("tipo") == "conflicto")
         tension = conflictos / total_msgs if total_msgs else 0.0
 
-        return {"densidad": densidad, "diversidad": diversidad, "tension": tension}
+        phi_dict = calculate_phi_for_agent_cluster(agentes)
+
+        metricas = {
+            "densidad": densidad,
+            "diversidad": diversidad,
+            "tension": tension,
+        }
+        metricas.update(phi_dict)
+        return metricas
 
     def eliminar_agentes_ineficientes(self, agentes, umbral=1, ciclo=0) -> List:
         vivos = [a for a in agentes if a.recompensa_total >= umbral]
